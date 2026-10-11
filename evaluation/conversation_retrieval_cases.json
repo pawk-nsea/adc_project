@@ -1,0 +1,191 @@
+[
+  {
+    "id": "asia_policy_follow_up",
+    "turns": [
+      {
+        "question": "What is the standard Asia-Pacific lodging limit?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 1},
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      },
+      {
+        "question": "Which one is newest and can I use?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 1},
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      },
+      {
+        "question": "So should I use reimbursement 2025?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 1},
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tokyo_exception_follow_up",
+    "turns": [
+      {
+        "question": "How much can I spend on lodging in Tokyo?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 1},
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      },
+      {
+        "question": "Does that require approval?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "remote_work_follow_up",
+    "turns": [
+      {
+        "question": "Who is eligible for remote work?",
+        "expected_evidence": [
+          {"filename": "workplace_policy.pdf", "page": 1}
+        ]
+      },
+      {
+        "question": "And which country can they work from?",
+        "expected_evidence": [
+          {"filename": "workplace_policy.pdf", "page": 2}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "non_reimbursable_confirmation",
+    "turns": [
+      {
+        "question": "Which expenses are not reimbursable?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      },
+      {
+        "question": "Are you sure?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "regional_lodging_fragments",
+    "turns": [
+      {
+        "question": "How much can I spend on lodging in Europe?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 1},
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      },
+      {
+        "question": "And to Zurich?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 1},
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      },
+      {
+        "question": "To Asia?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 1},
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      },
+      {
+        "question": "Which documents are conflicting?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 1},
+          {"filename": "reimbursement_2025.pdf", "page": 2},
+          {"filename": "travel_expenses_2022.pdf", "page": 2}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gift_threshold_follow_up",
+    "turns": [
+      {
+        "question": "When must a gift be disclosed or refused?",
+        "expected_evidence": [
+          {"filename": "Code of Business Conduct.pdf", "page": 1}
+        ]
+      },
+      {
+        "question": "What about exactly USD 250?",
+        "expected_evidence": [
+          {"filename": "Code of Business Conduct.pdf", "page": 1}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "data_classification_and_authority_follow_up",
+    "turns": [
+      {
+        "question": "Can Restricted data be stored on an encrypted local drive?",
+        "expected_evidence": [
+          {"filename": "information_security_data.pdf", "page": 1}
+        ]
+      },
+      {
+        "question": "What about Confidential data on an encrypted laptop?",
+        "expected_evidence": [
+          {"filename": "data_guidelines.pdf", "page": 1},
+          {"filename": "information_security_data.pdf", "page": 1}
+        ]
+      },
+      {
+        "question": "Does that newer security policy explicitly revoke the old memo?",
+        "expected_evidence": [
+          {"filename": "data_guidelines.pdf", "page": 1},
+          {"filename": "information_security_data.pdf", "page": 1}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "procurement_threshold_follow_up",
+    "turns": [
+      {
+        "question": "Who approves vendor spend of USD 75,000?",
+        "expected_evidence": [
+          {"filename": "vendor_procurement_policy.pdf", "page": 1}
+        ]
+      },
+      {
+        "question": "What about exactly USD 100,000?",
+        "expected_evidence": [
+          {"filename": "vendor_procurement_policy.pdf", "page": 1}
+        ]
+      }
+    ]
+  },
+  {
+    "id": "complete_topic_switch",
+    "turns": [
+      {
+        "question": "What is the current Europe lodging limit?",
+        "expected_evidence": [
+          {"filename": "reimbursement_2025.pdf", "page": 1},
+          {"filename": "reimbursement_2025.pdf", "page": 2}
+        ]
+      },
+      {
+        "question": "Can I store Restricted data on a local hard drive?",
+        "expected_evidence": [
+          {"filename": "information_security_data.pdf", "page": 1}
+        ]
+      }
+    ]
+  }
+]

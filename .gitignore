@@ -1,0 +1,33 @@
+.env
+.venv/
+.agents/
+.codex/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Local application state. Keep the directory itself in the repository.
+data/runtime/*
+!data/runtime/.gitkeep
+
+# Local model cache when configured inside the project.
+data/model-cache/*
+!data/model-cache/.gitkeep
+
+# Keep the extracted demo policies, but not duplicate/source-system artifacts.
+data/sampleset_policies.zip
+**/.DS_Store
+**/__MACOSX/
+
+# The reviewers already have the ADC case document. Do not redistribute it.
+project description/
+
+# Local logs and editor settings.
+*.log
+.idea/
+.vscode/

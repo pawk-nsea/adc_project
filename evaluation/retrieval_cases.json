@@ -1,0 +1,109 @@
+[
+  {
+    "id": "current_submission_deadline",
+    "category": "direct_fact",
+    "question": "Under the current travel policy, how soon after travel must expenses be submitted?",
+    "expected_evidence": [
+      {"filename": "reimbursement_2025.pdf", "page": 1}
+    ]
+  },
+  {
+    "id": "current_asia_lodging",
+    "category": "table",
+    "question": "What is the standard Asia-Pacific lodging reimbursement limit under the current policy?",
+    "expected_evidence": [
+      {"filename": "reimbursement_2025.pdf", "page": 2}
+    ]
+  },
+  {
+    "id": "historical_submission_deadline",
+    "category": "version",
+    "question": "In version 2.6 of policy FIN-T&E-001, what was the expense submission deadline?",
+    "expected_evidence": [
+      {"filename": "travel_expenses_2022.pdf", "page": 1}
+    ]
+  },
+  {
+    "id": "restricted_local_storage",
+    "category": "direct_fact",
+    "question": "May Restricted data be stored on a local hard drive?",
+    "expected_evidence": [
+      {"filename": "information_security_data.pdf", "page": 1}
+    ]
+  },
+  {
+    "id": "procurement_approval",
+    "category": "table",
+    "question": "Who must approve a vendor spend of USD 75,000?",
+    "expected_evidence": [
+      {"filename": "vendor_procurement_policy.pdf", "page": 1}
+    ]
+  },
+  {
+    "id": "prohibited_gift",
+    "category": "direct_fact",
+    "question": "Are employees allowed to accept a gift worth more than USD 250?",
+    "expected_evidence": [
+      {"filename": "Code of Business Conduct.pdf", "page": 1}
+    ]
+  },
+  {
+    "id": "monthly_home_stipend",
+    "category": "direct_fact",
+    "question": "What is the current monthly home office stipend?",
+    "expected_evidence": [
+      {"filename": "workplace_policy.pdf", "page": 2}
+    ]
+  },
+  {
+    "id": "remote_eligibility_and_location",
+    "category": "cross_page",
+    "question": "What service requirement applies to remote work eligibility, and from which country must work be performed?",
+    "expected_evidence": [
+      {"filename": "workplace_policy.pdf", "page": 1},
+      {"filename": "workplace_policy.pdf", "page": 2}
+    ]
+  },
+  {
+    "id": "travel_deadline_and_lodging",
+    "category": "cross_page",
+    "question": "Under the current travel policy, what are both the submission deadline and the Asia-Pacific lodging cap?",
+    "expected_evidence": [
+      {"filename": "reimbursement_2025.pdf", "page": 1},
+      {"filename": "reimbursement_2025.pdf", "page": 2}
+    ]
+  },
+  {
+    "id": "local_storage_conflict",
+    "category": "conflict",
+    "question": "What do the policies say about storing sensitive company data on local encrypted laptops or hard drives?",
+    "expected_evidence": [
+      {"filename": "data_guidelines.pdf", "page": 1},
+      {"filename": "information_security_data.pdf", "page": 1}
+    ]
+  },
+  {
+    "id": "home_office_conflict",
+    "category": "conflict",
+    "question": "Compare the older temporary and current rules for personal laptops and home-office reimbursement.",
+    "expected_evidence": [
+      {"filename": "home_office_guidelines.pdf", "page": 1},
+      {"filename": "workplace_policy.pdf", "page": 2}
+    ]
+  },
+  {
+    "id": "vendor_meal_cross_policy",
+    "category": "cross_policy",
+    "question": "Which policies govern accepting a vendor-sponsored dinner and the related approvals?",
+    "expected_evidence": [
+      {"filename": "vendor_procurement_policy.pdf", "page": 1},
+      {"filename": "Code of Business Conduct.pdf", "page": 1}
+    ]
+  },
+  {
+    "id": "parental_leave_missing",
+    "category": "missing_answer",
+    "question": "How many weeks of paid parental leave do employees receive?",
+    "expected_evidence": []
+  }
+]

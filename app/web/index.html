@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Ask grounded questions about Apex Global policy documents.">
+    <title>Apex Global Policy Assistant</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script type="module" src="/static/app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Apex Global Policy Assistant home">
+          <span class="brand-mark" aria-hidden="true">A</span>
+          <span>
+            <strong>Apex Global</strong>
+            <small>Policy Assistant</small>
+          </span>
+        </a>
+        <div class="topbar-actions">
+          <span class="privacy-note"><span class="status-dot"></span> Grounded in your documents</span>
+          <a class="button button-quiet" href="/docs" target="_blank" rel="noreferrer">API docs</a>
+          <button class="button button-secondary" id="new-workspace-button" type="button">New workspace</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="sources-panel" aria-label="Saved chats and policy sources">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Workspace</p>
+              <h1 id="chats-heading">Saved chats</h1>
+            </div>
+          </div>
+
+          <p class="history-empty" id="history-empty">Your saved policy chats will appear here.</p>
+          <ul class="conversation-list" id="conversation-list" aria-labelledby="chats-heading"></ul>
+
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Knowledge</p>
+              <h2 id="sources-heading">Policy sources</h2>
+            </div>
+            <span class="source-count" id="source-count" aria-label="0 indexed sources">0</span>
+          </div>
+
+          <label class="drop-zone" id="drop-zone" for="file-input">
+            <input id="file-input" type="file" accept="application/pdf,.pdf" multiple>
+            <span class="upload-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 15.5v2A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5v-2"/>
+              </svg>
+            </span>
+            <strong>Add policy PDFs</strong>
+            <span>Drop files here or <u>browse</u></span>
+            <small>PDF only · up to 10 MB each</small>
+          </label>
+
+          <div class="upload-list" id="upload-list" aria-live="polite"></div>
+
+          <div class="sources-empty" id="sources-empty">
+            <span aria-hidden="true">01</span>
+            <p>Your indexed documents will appear here. Add a policy to begin asking grounded questions.</p>
+          </div>
+          <ul class="source-list" id="source-list" aria-label="Indexed policy documents"></ul>
+
+          <details class="advanced-details">
+            <summary>Workspace details</summary>
+            <p>This technical ID links uploads and conversation history.</p>
+            <div class="workspace-id-row">
+              <code id="conversation-id"></code>
+              <button id="copy-id-button" class="icon-button" type="button" aria-label="Copy workspace ID" title="Copy workspace ID">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8h10v11H9zM5 5h10v3M5 5v11h4"/></svg>
+              </button>
+            </div>
+          </details>
+        </aside>
+
+        <section class="chat-panel" aria-labelledby="chat-heading">
+          <div class="chat-heading-row">
+            <div>
+              <p class="eyebrow">Conversation</p>
+              <h2 id="chat-heading">Ask about your policies</h2>
+            </div>
+            <span class="workspace-state" id="workspace-state">Add a source to begin</span>
+          </div>
+
+          <div class="messages" id="messages" aria-live="polite" aria-label="Conversation messages">
+            <section class="welcome" id="welcome">
+              <div class="assistant-orb" aria-hidden="true">A</div>
+              <p class="eyebrow">Apex policy intelligence</p>
+              <h3>Answers you can trace back to the source.</h3>
+              <p>Upload policy PDFs, then ask a question in everyday language. Every grounded answer includes the document and page it came from.</p>
+              <div class="steps" aria-label="How it works">
+                <div><span>1</span><p><strong>Add policies</strong>Upload one or more PDFs.</p></div>
+                <div><span>2</span><p><strong>Ask naturally</strong>Use a full policy question.</p></div>
+                <div><span>3</span><p><strong>Check sources</strong>Review citations before acting.</p></div>
+              </div>
+              <div class="suggestions" id="suggestions" aria-label="Suggested questions">
+                <button type="button">What is the standard Asia-Pacific lodging limit?</button>
+                <button type="button">Which expenses are not reimbursable?</button>
+                <button type="button">Do any uploaded policies conflict?</button>
+              </div>
+            </section>
+          </div>
+
+          <div class="chat-error" id="chat-error" role="alert" hidden></div>
+
+          <form class="composer" id="chat-form">
+            <label class="sr-only" for="message-input">Ask a policy question</label>
+            <textarea id="message-input" rows="1" maxlength="10000" placeholder="Upload a policy to start asking questions" disabled></textarea>
+            <button class="send-button" id="send-button" type="submit" disabled aria-label="Send question">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+            </button>
+            <p>Answers are generated from uploaded policies. Verify important decisions against the cited source.</p>
+          </form>
+        </section>
+      </main>
+    </div>
+    <div class="sr-only" id="live-status" aria-live="assertive"></div>
+  </body>
+</html>
