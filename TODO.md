@@ -38,8 +38,8 @@ Use this as the main checklist. `[x]` means ready; `[ ]` still needs work.
 - [x] Add local setup and run instructions to `README.md`.
 - [x] Add a short Design Decisions section to `README.md`.
 - [x] Keep secrets and generated files out of Git.
-- [ ] Create the private GitHub repository `adc_project`.
-- [ ] Push the reviewed `main` branch.
+- [x] Create the private GitHub repository `adc_project`.
+- [x] Push the reviewed `main` branch.
 - [ ] Give the ADC reviewers access.
 - [ ] Check the repository link in a private/incognito window.
 
