@@ -48,13 +48,29 @@ This keeps ingestion and retrieval local, but live chat requires a Gemini creden
 
 These commands were verified with Python 3.13. Python 3.11–3.13 is supported.
 
-After the one-time environment setup below, the normal way to launch the complete local application is:
+### Fastest setup on a new computer
+
+Install Python 3.11–3.13, download or clone this repository, and run:
+
+```bash
+./setup_and_run.sh
+```
+
+This creates `.venv`, installs the application, asks for a Gemini API key, saves the key only in the Git-ignored local `.env`, starts the server, and opens the app. The first policy upload also downloads the local embedding model. Internet access is therefore required during first setup.
+
+The Gemini key is deliberately not included in the repository. Every user must supply their own key; committing a shared key would expose a reusable credential.
+
+### Normal use after setup
+
+After the one-time setup, launch the complete local application with:
 
 ```bash
 ./run_app.sh
 ```
 
-The launcher uses `.venv`, lets the application load `.env`, initializes local storage during FastAPI startup, enables code reload, and opens the employee-facing web application in the default browser once the health endpoint is ready. Stop it with `Ctrl+C`. It does not reinstall dependencies or expose secrets.
+The launcher uses `.venv`, lets the application load `.env`, initializes local storage during FastAPI startup, enables code reload, and opens the employee-facing web application in the default browser once the health endpoint is ready. Stop it with `Ctrl+C`.
+
+### Manual development setup
 
 ```bash
 python3.13 -m venv .venv

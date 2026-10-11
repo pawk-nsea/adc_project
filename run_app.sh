@@ -14,17 +14,14 @@ health_url="http://${app_host}:${app_port}/health"
 
 if [[ ! -x "${python_executable}" ]]; then
     echo "Project environment not found at ${project_directory}/.venv"
-    echo "Create it and install the project first:"
-    echo "  python3.13 -m venv .venv"
-    echo "  .venv/bin/python -m pip install -e '.[dev]'"
+    echo "Run ./setup_and_run.sh for automatic first-time setup."
     exit 1
 fi
 
 cd "${project_directory}"
 
 if ! "${python_executable}" -c "import fastapi, uvicorn, chromadb, google.genai" 2>/dev/null; then
-    echo "Project dependencies are incomplete. Install them with:"
-    echo "  .venv/bin/python -m pip install -e '.[dev]'"
+    echo "Project dependencies are incomplete. Run ./setup_and_run.sh."
     exit 1
 fi
 
