@@ -2,8 +2,7 @@
 
 A Python retrieval-augmented generation (RAG) prototype for the ADC GenAI Engineer case: retrieve policy text, then give it to a model to answer a question. Upload policy PDFs, ask questions, and inspect cited PDF pages. The browser interface supports separate workspaces and saved conversations. A workspace is the document set and history linked by one `conversation_id`.
 
-The prototype implements ingestion, retrieval, grounded answer generation, verification and persistence. It remains a local demonstration: live evaluations found reasoning and evidence-selection errors. See [evaluation evidence and limitations](docs/EVALUATION.md).
-
+The prototype implements ingestion, retrieval, grounded answer generation, verification and persistence. 
 ## Technology stack
 
 | Concern | Technology |
