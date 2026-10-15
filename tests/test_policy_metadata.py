@@ -13,15 +13,21 @@ POLICY_DIRECTORY = Path("data/sampleset_policies/sampleset_policies")
 
 
 def _metadata(filename: str):
+    """Extract authority metadata from a supplied PDF fixture."""
+
     parsed = parse_pdf((POLICY_DIRECTORY / filename).read_bytes())
     return extract_policy_authority(parsed.pages)
 
 
 def _synthetic(text: str):
+    """Extract metadata from a synthetic single page without writing a PDF."""
+
     return extract_policy_authority([ParsedPage(page_number=1, text=text)])
 
 
 def test_extracts_policy_identity_and_supersession_signals() -> None:
+    """Check labeled identity, date and replacement wording against a supplied policy."""
+
     current = _metadata("reimbursement_2025.pdf")
 
     assert current.policy_id == "FIN-T&E-001"
@@ -32,6 +38,8 @@ def test_extracts_policy_identity_and_supersession_signals() -> None:
 
 
 def test_subject_terms_are_derived_from_identity_without_fixed_policy_categories() -> None:
+    """Derive matching vocabulary from an unfamiliar synthetic policy identity."""
+
     metadata = _synthetic(
         "Orbital Greenhouse Access Manual\n"
         "Reference: AST-BOT-77\n"
@@ -45,6 +53,8 @@ def test_subject_terms_are_derived_from_identity_without_fixed_policy_categories
 
 
 def test_resolves_same_policy_versions_only_with_identity_and_explicit_supersession() -> None:
+    """Annotate older same-ID evidence when a later dated policy explicitly replaces it."""
+
     old = _synthetic(
         "Polar Field Allowance Policy\nPolicy ID: OPS-POLAR-9\n"
         "Version: 1.0\nEffective Date: 2025-01-01"
@@ -63,6 +73,8 @@ def test_resolves_same_policy_versions_only_with_identity_and_explicit_supersess
 
 
 def test_newer_date_without_explicit_relationship_does_not_establish_authority() -> None:
+    """Keep both versions unspecified when date order is the only relationship signal."""
+
     old = _synthetic(
         "Coastal Sensor Policy\nPolicy ID: LAB-2\nEffective Date: 2025-01-01"
     )
@@ -77,6 +89,8 @@ def test_newer_date_without_explicit_relationship_does_not_establish_authority()
 
 
 def test_resolves_unfamiliar_interim_lifecycle_from_named_target() -> None:
+    """Resolve a named interim successor without relying on supplied-policy categories."""
+
     interim = _synthetic(
         "Temporary Observatory Access Guidance\n"
         "Effective Date: 1 March 2024\n"
@@ -99,6 +113,8 @@ def test_resolves_unfamiliar_interim_lifecycle_from_named_target() -> None:
 
 
 def test_interim_does_not_match_unrelated_later_policy() -> None:
+    """Avoid assigning succession solely because an unrelated policy is newer."""
+
     interim = _synthetic(
         "Temporary Observatory Access Guidance\n"
         "Effective Date: 1 March 2024\n"

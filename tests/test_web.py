@@ -18,7 +18,13 @@ def request_with_setup(
     path: str,
     setup: Callable[[], None] | None = None,
 ) -> httpx.Response:
+    """Start the app, seed the requested scenario and return an in-process HTTP response."""
+
     async def send() -> httpx.Response:
+        """Execute the request inside the application lifespan using an in-process ASGI
+        transport.
+        """
+
         transport = httpx.ASGITransport(app=application)
         async with application.router.lifespan_context(application):
             if setup:
@@ -33,6 +39,8 @@ def request_with_setup(
 
 
 def test_employee_web_app_and_assets_are_served(application: FastAPI) -> None:
+    """Check the workspace page and required frontend assets through the application routes."""
+
     page = request_with_setup(application, "GET", "/")
     stylesheet = request_with_setup(application, "GET", "/static/styles.css")
     script = request_with_setup(application, "GET", "/static/app.js")
@@ -51,6 +59,8 @@ def test_employee_web_app_and_assets_are_served(application: FastAPI) -> None:
 
 
 def test_unknown_conversation_summary_returns_not_found(application: FastAPI) -> None:
+    """Return a controlled missing-workspace response when restoring an unknown ID."""
+
     response = request_with_setup(application, "GET", "/conversations/missing")
 
     assert response.status_code == 404
@@ -60,9 +70,13 @@ def test_unknown_conversation_summary_returns_not_found(application: FastAPI) ->
 def test_conversation_summary_restores_only_its_indexed_state(
     application: FastAPI,
 ) -> None:
+    """Filter failed documents and other workspaces while retaining this chat's messages."""
+
     started_at = datetime(2026, 10, 10, 10, 0, tzinfo=UTC)
 
     def seed() -> None:
+        """Populate the scenario's saved state after application startup creates its tables."""
+
         with application.state.database.session_factory() as session:
             session.add_all(
                 [
@@ -149,9 +163,13 @@ def test_conversation_summary_restores_only_its_indexed_state(
 def test_saved_conversations_use_first_prompt_titles_and_latest_activity_order(
     application: FastAPI,
 ) -> None:
+    """Build sidebar labels from first questions and order chats by their latest activity."""
+
     started_at = datetime(2026, 10, 10, 10, 0, tzinfo=UTC)
 
     def seed() -> None:
+        """Populate the scenario's saved state after application startup creates its tables."""
+
         with application.state.database.session_factory() as session:
             session.add_all(
                 [
@@ -219,9 +237,13 @@ def test_saved_conversations_use_first_prompt_titles_and_latest_activity_order(
 def test_delete_conversation_removes_messages_documents_and_vectors(
     application: FastAPI,
 ) -> None:
+    """Check both storage cleanup paths for a successful workspace deletion."""
+
     started_at = datetime(2026, 10, 10, 10, 0, tzinfo=UTC)
 
     def seed() -> None:
+        """Populate the scenario's saved state after application startup creates its tables."""
+
         with application.state.database.session_factory() as session:
             session.add(Conversation(id="delete-me", created_at=started_at))
             session.add(
@@ -272,6 +294,8 @@ def test_delete_conversation_removes_messages_documents_and_vectors(
 
 
 def test_delete_unknown_conversation_returns_not_found(application: FastAPI) -> None:
+    """Reject deletion of an absent workspace without inventing a successful result."""
+
     response = request_with_setup(
         application,
         "DELETE",
@@ -285,10 +309,14 @@ def test_delete_unknown_conversation_returns_not_found(application: FastAPI) -> 
 def test_legacy_conversation_id_with_url_symbols_can_be_loaded_and_deleted(
     application: FastAPI,
 ) -> None:
+    """Preserve encoded legacy IDs containing path/query symbols in read and delete routes."""
+
     started_at = datetime(2026, 10, 10, 10, 0, tzinfo=UTC)
     conversation_id = "legacy/id#with?symbols"
 
     def seed() -> None:
+        """Populate the scenario's saved state after application startup creates its tables."""
+
         with application.state.database.session_factory() as session:
             session.add(Conversation(id=conversation_id, created_at=started_at))
             session.add(

@@ -37,6 +37,7 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse:
     except ChatProviderTimeoutError as exc:
         raise HTTPException(status_code=504, detail=str(exc)) from exc
     except (InvalidModelResponseError, ChatProviderError) as exc:
+        # Failed model output is an upstream failure, not an accepted policy abstention.
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except ChatPersistenceError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc

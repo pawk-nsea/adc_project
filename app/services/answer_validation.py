@@ -32,6 +32,7 @@ def validate_citations(
     first-citation order. This checks provenance, not whether a rule supports prose.
     """
 
+    # Reuse prompt order: the model's source numbers are local to this evidence window.
     evidence_by_id = {
         source_id(index): chunk for index, chunk in enumerate(evidence)
     }

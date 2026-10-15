@@ -18,6 +18,10 @@ def request(
     """Send an in-process request while running application startup/shutdown."""
 
     async def send() -> httpx.Response:
+        """Execute the request inside the application lifespan using an in-process ASGI
+        transport.
+        """
+
         transport = httpx.ASGITransport(app=application)
         async with application.router.lifespan_context(application):
             async with httpx.AsyncClient(
@@ -30,6 +34,8 @@ def request(
 
 
 def test_health_reports_api_availability(application: FastAPI) -> None:
+    """Check the process health response independently of any hosted model."""
+
     response = request(application, "GET", "/health")
 
     assert response.status_code == 200
@@ -37,6 +43,8 @@ def test_health_reports_api_availability(application: FastAPI) -> None:
 
 
 def test_openapi_lists_foundation_routes(application: FastAPI) -> None:
+    """Keep the required upload, chat and health endpoints discoverable in OpenAPI."""
+
     response = request(application, "GET", "/openapi.json")
 
     assert response.status_code == 200
@@ -44,12 +52,16 @@ def test_openapi_lists_foundation_routes(application: FastAPI) -> None:
 
 
 def test_upload_requires_conversation_and_file(application: FastAPI) -> None:
+    """Reject a multipart request missing the required workspace ID and PDF."""
+
     response = request(application, "POST", "/upload")
 
     assert response.status_code == 422
 
 
 def test_upload_rejects_blank_conversation_id(application: FastAPI) -> None:
+    """Reject whitespace-only workspace IDs before ingestion."""
+
     response = request(
         application,
         "POST",
@@ -64,6 +76,8 @@ def test_upload_rejects_blank_conversation_id(application: FastAPI) -> None:
 def test_non_pdf_upload_is_rejected(
     application: FastAPI,
 ) -> None:
+    """Check file-signature validation even when the filename and MIME type claim PDF."""
+
     response = request(
         application,
         "POST",
@@ -79,6 +93,8 @@ def test_non_pdf_upload_is_rejected(
 
 
 def test_chat_rejects_blank_fields(application: FastAPI) -> None:
+    """Apply whitespace normalization before enforcing nonempty chat fields."""
+
     response = request(
         application,
         "POST",
@@ -92,6 +108,8 @@ def test_chat_rejects_blank_fields(application: FastAPI) -> None:
 def test_chat_rejects_unknown_conversation(
     application: FastAPI,
 ) -> None:
+    """Return a missing-workspace response before retrieval or generation."""
+
     response = request(
         application,
         "POST",
@@ -104,7 +122,11 @@ def test_chat_rejects_unknown_conversation(
 
 
 def test_database_schema_is_created(application: FastAPI) -> None:
+    """Check that application startup creates the three relational tables."""
+
     async def create_schema() -> set[str]:
+        """Enter the application lifespan so its normal startup creates the database schema."""
+
         async with application.router.lifespan_context(application):
             return set(
                 inspect(application.state.database.engine).get_table_names()
@@ -116,6 +138,8 @@ def test_database_schema_is_created(application: FastAPI) -> None:
 
 
 def test_existing_sqlite_documents_table_gets_additive_document_columns(tmp_path) -> None:
+    """Keep older SQLite uploads readable by adding retained-PDF and authority columns."""
+
     database = Database(f"sqlite:///{tmp_path / 'legacy.db'}")
     with database.engine.begin() as connection:
         connection.execute(

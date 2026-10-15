@@ -14,6 +14,8 @@ class PdfParseError(ValueError):
 
 @dataclass(frozen=True)
 class ParsedPage:
+    """Pair extracted text with its original one-based PDF page number."""
+
     page_number: int
     text: str
 

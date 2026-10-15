@@ -14,6 +14,8 @@ from tests.test_chat import evidence, request_with_setup, seed_conversation
 
 
 def test_production_chat_path_contains_no_supplied_policy_facts() -> None:
+    """Guard selected production files against embedding known sample-policy answers."""
+
     production_text = "\n".join(
         Path(path).read_text(encoding="utf-8")
         for path in (
@@ -42,6 +44,8 @@ def test_production_chat_path_contains_no_supplied_policy_facts() -> None:
 
 
 def test_empty_evidence_abstains_without_calling_provider(application):
+    """Save the local upload-guidance response when no indexed evidence can be retrieved."""
+
     response = request_with_setup(application, lambda: seed_conversation(application))
 
     assert response.status_code == 200
@@ -53,6 +57,8 @@ def test_empty_evidence_abstains_without_calling_provider(application):
 
 
 def test_complete_new_topic_does_not_inherit_previous_question():
+    """Exclude both old topics and invented assistant amounts from a complete new query."""
+
     history = [
         HistoryMessage(role="user", content="What is the orbital-lab access rule?"),
         HistoryMessage(role="assistant", content="A fabricated limit of 9999 units."),
@@ -68,6 +74,8 @@ def test_complete_new_topic_does_not_inherit_previous_question():
 
 
 def test_confirmation_reuses_user_question_but_never_assistant_facts():
+    """Use user-authored context for a confirmation query without trusting prior answer facts."""
+
     query = build_retrieval_question(
         question="Are you sure?",
         history=[
@@ -92,10 +100,14 @@ def test_confirmation_reuses_user_question_but_never_assistant_facts():
     ],
 )
 def test_broad_and_authority_questions_receive_expanded_context(question):
+    """Select the larger retrieval window for broad or policy-authority wording."""
+
     assert needs_expanded_context(question)
 
 
 def test_ordinary_fact_question_keeps_normal_context_budget():
+    """Keep a simple factual question within the default evidence window."""
+
     assert not needs_expanded_context("What is the bicycle parking allowance?")
 
 
@@ -129,7 +141,11 @@ def test_unfamiliar_policy_names_values_scopes_and_categories_flow_through_api(
     source_text,
     answer,
 ):
+    """Pass synthetic policy content through citation handling without hard-coded answers."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             replace(evidence(1, filename=filename), text=source_text)
@@ -148,7 +164,11 @@ def test_unfamiliar_policy_names_values_scopes_and_categories_flow_through_api(
 
 
 def test_partially_supported_question_answers_supported_part_and_names_gap(application):
+    """Retain a supported seasonal rule while explicitly acknowledging the missing season."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             replace(
@@ -176,6 +196,8 @@ def test_partially_supported_question_answers_supported_part_and_names_gap(appli
 
 
 def test_genuine_unseen_conflict_is_preserved(application):
+    """Return a synthetic material contradiction with both source references intact."""
+
     first = replace(
         evidence(1, filename="lab-access-a.pdf"),
         text="Contractors may enter Lab K after 07:00.",
@@ -186,6 +208,8 @@ def test_genuine_unseen_conflict_is_preserved(application):
     )
 
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [first, second]
         application.state.fake_chat_provider.answer = ModelAnswer(
@@ -211,6 +235,8 @@ def test_genuine_unseen_conflict_is_preserved(application):
 
 
 def test_compatible_unseen_rules_are_not_forced_into_conflict(application):
+    """Allow a fake accepted answer to combine compatible approval and access conditions."""
+
     first = replace(
         evidence(1, filename="archive-access.pdf"),
         text="Researchers must obtain archive-owner approval before entry.",
@@ -221,6 +247,8 @@ def test_compatible_unseen_rules_are_not_forced_into_conflict(application):
     )
 
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [first, second]
         application.state.fake_chat_provider.answer = ModelAnswer(

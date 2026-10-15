@@ -23,12 +23,16 @@ def new_id() -> str:
 
 
 class DocumentStatus(StrEnum):
+    """Track whether an upload is being processed, available for use, or failed."""
+
     PROCESSING = "processing"
     INDEXED = "indexed"
     FAILED = "failed"
 
 
 class MessageRole(StrEnum):
+    """Identify the speaker of a persisted conversation message."""
+
     USER = "user"
     ASSISTANT = "assistant"
 

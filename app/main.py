@@ -39,6 +39,10 @@ def create_app(
 
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
+        """Initialize storage and shared services before requests; close SQL connections on
+        shutdown.
+        """
+
         database.create_tables()
         resolved_embedding_provider = embedding_provider or OnnxMiniLmEmbeddingProvider(
             cache_path=resolved_settings.model_cache_path,

@@ -36,11 +36,17 @@ class VectorStore(Protocol):
         *,
         embedding_model: str,
         chunking_version: str,
-    ) -> None: ...
+    ) -> None:
+        """Persist aligned chunks and vectors with embedding/chunking version metadata."""
+        ...
 
-    def delete_document(self, document_id: str) -> None: ...
+    def delete_document(self, document_id: str) -> None:
+        """Remove vectors for a document without changing relational upload records."""
+        ...
 
-    def count_document_chunks(self, document_id: str) -> int: ...
+    def count_document_chunks(self, document_id: str) -> int:
+        """Count persisted vectors so ingestion can check indexing completeness."""
+        ...
 
     def search(
         self,
@@ -49,7 +55,9 @@ class VectorStore(Protocol):
         conversation_id: str,
         embedding_model: str,
         top_k: int,
-    ) -> list[RetrievedChunk]: ...
+    ) -> list[RetrievedChunk]:
+        """Return ranked vector matches restricted to the requested workspace and model."""
+        ...
 
     def keyword_search(
         self,
@@ -58,7 +66,9 @@ class VectorStore(Protocol):
         conversation_id: str,
         embedding_model: str,
         top_k: int,
-    ) -> list[RetrievedChunk]: ...
+    ) -> list[RetrievedChunk]:
+        """Return lexical matches within the requested workspace and embedding model."""
+        ...
 
     def get_document_start_chunks(
         self,
@@ -66,7 +76,9 @@ class VectorStore(Protocol):
         conversation_id: str,
         embedding_model: str,
         document_ids: list[str],
-    ) -> list[RetrievedChunk]: ...
+    ) -> list[RetrievedChunk]:
+        """Read the earliest indexed fragment of each selected document for context."""
+        ...
 
     def get_page_chunks(
         self,
@@ -74,13 +86,17 @@ class VectorStore(Protocol):
         conversation_id: str,
         embedding_model: str,
         page_keys: list[tuple[str, int]],
-    ) -> list[RetrievedChunk]: ...
+    ) -> list[RetrievedChunk]:
+        """Read fragments belonging to the requested document/page pairs in this workspace."""
+        ...
 
 
 class ChromaVectorStore:
     """Store precomputed vectors and source provenance in local Chroma."""
 
     def __init__(self, path: str, collection_name: str) -> None:
+        """Open local persistence and a cosine collection that accepts precomputed embeddings."""
+
         import chromadb
 
         self._client = chromadb.PersistentClient(path=path)
@@ -121,9 +137,13 @@ class ChromaVectorStore:
         )
 
     def delete_document(self, document_id: str) -> None:
+        """Delete all chunks for the globally assigned document ID; SQL cleanup is separate."""
+
         self._collection.delete(where={"document_id": document_id})
 
     def count_document_chunks(self, document_id: str) -> int:
+        """Read matching IDs without loading text or vectors and return their count."""
+
         records = self._collection.get(
             where={"document_id": document_id},
             include=[],

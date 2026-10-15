@@ -6,6 +6,7 @@ set -euo pipefail
 project_directory="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 venv_python="${project_directory}/.venv/bin/python"
 
+# Print the first compatible interpreter; return failure if none is available.
 find_supported_python() {
     local candidate
     for candidate in python3.13 python3.12 python3.11 python3; do
@@ -20,6 +21,7 @@ find_supported_python() {
     return 1
 }
 
+# Preserve an existing key; otherwise accept optional hidden terminal input.
 configure_local_key() {
     local key source_file temporary_file
 
@@ -57,6 +59,7 @@ configure_local_key() {
         source_file="${project_directory}/.env"
     fi
 
+    # Write beside .env and rename only after the complete replacement is ready.
     temporary_file="$(mktemp "${project_directory}/.env.tmp.XXXXXX")"
     trap 'rm -f "${temporary_file:-}"' RETURN
     umask 077

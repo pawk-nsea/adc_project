@@ -70,6 +70,7 @@ def require_verified_answer(verification: AnswerVerification, *, answer: ModelAn
     An empty issue list permits acceptance; Python does not verify the audit prose.
     """
 
+    # Trust the structured defect list here; narrative agreement is not machine-verified.
     if not verification.is_accepted():
         issues = "; ".join(
             f"{issue.category}: {issue.description}" for issue in verification.issues

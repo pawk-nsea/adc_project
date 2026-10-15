@@ -21,7 +21,13 @@ def request(
     path: str,
     **kwargs: object,
 ) -> httpx.Response:
+    """Run an in-process HTTP request with application startup and shutdown around it."""
+
     async def send() -> httpx.Response:
+        """Execute the request inside the application lifespan using an in-process ASGI
+        transport.
+        """
+
         transport = httpx.ASGITransport(app=application)
         async with application.router.lifespan_context(application):
             async with httpx.AsyncClient(
@@ -34,6 +40,8 @@ def request(
 
 
 def upload(application: FastAPI, conversation_id: str) -> httpx.Response:
+    """Upload the sample PDF using a path-like filename to exercise filename sanitization."""
+
     return request(
         application,
         "POST",
@@ -50,6 +58,8 @@ def upload(application: FastAPI, conversation_id: str) -> httpx.Response:
 
 
 def test_upload_indexes_pdf_and_persists_provenance(application: FastAPI) -> None:
+    """Check saved original bytes, authority metadata and chunk provenance after indexing."""
+
     response = upload(application, "conversation-a")
 
     assert response.status_code == 201
@@ -85,6 +95,8 @@ def test_upload_indexes_pdf_and_persists_provenance(application: FastAPI) -> Non
 def test_uploaded_pdf_can_be_opened_only_from_its_own_conversation(
     application: FastAPI,
 ) -> None:
+    """Serve retained bytes with PDF headers while enforcing the workspace membership filter."""
+
     uploaded = upload(application, "conversation-a")
     document_id = uploaded.json()["document_id"]
 
@@ -110,6 +122,8 @@ def test_uploaded_pdf_can_be_opened_only_from_its_own_conversation(
 
 
 def test_duplicate_is_scoped_to_conversation(application: FastAPI) -> None:
+    """Reject repeated bytes in one workspace while allowing the same PDF in another."""
+
     assert upload(application, "conversation-a").status_code == 201
     duplicate = upload(application, "conversation-a")
     other_conversation = upload(application, "conversation-b")
@@ -120,6 +134,8 @@ def test_duplicate_is_scoped_to_conversation(application: FastAPI) -> None:
 
 
 def test_partial_vector_failure_is_cleaned_up_and_recorded(application: FastAPI) -> None:
+    """Remove partially written vectors and leave a failed relational upload record."""
+
     application.state.fake_vector_store.fail_on_add = True
 
     response = upload(application, "failure-conversation")
@@ -134,6 +150,10 @@ def test_partial_vector_failure_is_cleaned_up_and_recorded(application: FastAPI)
 
 
 def test_malformed_pdf_is_422(application: FastAPI) -> None:
+    """Return a controlled client error for bytes that pass the signature check but cannot
+    parse.
+    """
+
     malformed = request(
         application,
         "POST",
@@ -145,6 +165,8 @@ def test_malformed_pdf_is_422(application: FastAPI) -> None:
 
 
 def test_oversized_upload_is_413(application: FastAPI) -> None:
+    """Reject a file exceeding the configured byte limit before indexing."""
+
     application.state.test_settings.max_upload_bytes = 8
 
     response = request(

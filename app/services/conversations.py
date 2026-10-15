@@ -13,23 +13,33 @@ from app.schemas import Citation
 
 
 class ConversationNotFoundError(LookupError):
+    """Signal that a requested saved workspace does not exist."""
+
     pass
 
 
 class ConversationDeletionError(RuntimeError):
+    """Report failed cross-store deletion, which may leave some vectors already removed."""
+
     pass
 
 
 class DocumentContentNotFoundError(LookupError):
+    """Hide PDFs that are missing, not indexed or outside the requested workspace."""
+
     pass
 
 
 class DocumentContentUnavailableError(LookupError):
+    """Distinguish older indexed uploads whose original PDF bytes were not retained."""
+
     pass
 
 
 @dataclass(frozen=True)
 class DocumentSummary:
+    """Expose indexed upload metadata and whether a PDF link can be opened."""
+
     document_id: str
     filename: str
     status: str
@@ -40,6 +50,8 @@ class DocumentSummary:
 
 @dataclass(frozen=True)
 class MessageSummary:
+    """Restore one saved message and citations; separate answer status is not persisted."""
+
     role: Literal["user", "assistant"]
     content: str
     citations: list[Citation]
@@ -48,6 +60,8 @@ class MessageSummary:
 
 @dataclass(frozen=True)
 class ConversationSummary:
+    """Combine an existing workspace with its indexed documents and chronological messages."""
+
     conversation_id: str
     created_at: datetime
     documents: list[DocumentSummary]
@@ -56,6 +70,8 @@ class ConversationSummary:
 
 @dataclass(frozen=True)
 class ConversationListItem:
+    """Describe sidebar activity and counts without returning message bodies to the client."""
+
     conversation_id: str
     title: str
     created_at: datetime
@@ -66,6 +82,8 @@ class ConversationListItem:
 
 @dataclass(frozen=True)
 class DocumentContent:
+    """Carry retained PDF bytes and the uploaded filename to the source-viewing endpoint."""
+
     filename: str
     content: bytes
 
@@ -74,11 +92,15 @@ class ConversationService:
     """Manage durable conversation state used by the lightweight web client."""
 
     def __init__(self, database: Database, vector_store: VectorStore) -> None:
+        """Share relational and vector storage with the read/delete workspace operations."""
+
         self._database = database
         self._vectors = vector_store
 
     @staticmethod
     def _title(first_question: str | None, first_filename: str | None) -> str:
+        """Prefer the first question, then a filename; normalize and shorten sidebar labels."""
+
         source = first_question or first_filename or "Policy workspace"
         normalized = " ".join(source.split())
         if len(normalized) <= 56:

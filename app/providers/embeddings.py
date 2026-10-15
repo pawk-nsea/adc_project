@@ -11,11 +11,17 @@ class EmbeddingProvider(Protocol):
     dimension: int
     max_input_tokens: int
 
-    def count_tokens(self, text: str) -> int: ...
+    def count_tokens(self, text: str) -> int:
+        """Count complete tokenizer input so chunk boundaries can be checked before embedding."""
+        ...
 
-    def embed_documents(self, texts: list[str]) -> list[list[float]]: ...
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        """Return one vector per text in input order, using the declared model and dimension."""
+        ...
 
-    def embed_query(self, text: str) -> list[float]: ...
+    def embed_query(self, text: str) -> list[float]:
+        """Represent a query in the same vector space as stored document chunks."""
+        ...
 
 
 class OnnxMiniLmEmbeddingProvider:
@@ -24,6 +30,8 @@ class OnnxMiniLmEmbeddingProvider:
     max_input_tokens = 256
 
     def __init__(self, cache_path: str, model_name: str, dimension: int) -> None:
+        """Configure CPU inference and project-local caching; model preparation is deferred."""
+
         from chromadb.utils.embedding_functions import ONNXMiniLM_L6_V2
 
         self.model_name = model_name

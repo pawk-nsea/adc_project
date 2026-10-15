@@ -13,6 +13,8 @@ POLICIES = Path("data/sampleset_policies/sampleset_policies")
 
 
 def test_all_supplied_policies_have_page_numbered_extractable_text() -> None:
+    """Verify readable, page-numbered extraction across the eight supplied PDF files."""
+
     policy_paths = sorted(POLICIES.glob("*.pdf"))
 
     assert len(policy_paths) == 8
@@ -24,11 +26,15 @@ def test_all_supplied_policies_have_page_numbered_extractable_text() -> None:
 
 
 def test_malformed_pdf_is_rejected() -> None:
+    """Map invalid PDF content to the parser's controlled failure type."""
+
     with pytest.raises(PdfParseError, match="unreadable or malformed"):
         parse_pdf(b"%PDF-this-is-not-a-real-pdf")
 
 
 def _blank_pdf(*, encrypted: bool = False) -> bytes:
+    """Build an in-memory blank PDF, optionally encrypted, for parser rejection cases."""
+
     output = BytesIO()
     writer = PdfWriter()
     writer.add_blank_page(width=100, height=100)
@@ -39,10 +45,14 @@ def _blank_pdf(*, encrypted: bool = False) -> bytes:
 
 
 def test_empty_text_pdf_is_rejected() -> None:
+    """Reject a structurally valid PDF that contains no extractable text."""
+
     with pytest.raises(PdfParseError, match="no extractable text"):
         parse_pdf(_blank_pdf())
 
 
 def test_encrypted_pdf_is_rejected() -> None:
+    """Reject encrypted input before attempting policy text extraction."""
+
     with pytest.raises(PdfParseError, match="Encrypted PDFs"):
         parse_pdf(_blank_pdf(encrypted=True))

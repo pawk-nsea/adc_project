@@ -34,6 +34,8 @@ VerificationCategory = Literal[
 
 @dataclass(frozen=True)
 class ChatMessage:
+    """Carry one role and text payload across the application/provider boundary."""
+
     role: ChatRole
     content: str
 
@@ -101,39 +103,55 @@ class AnswerVerification(BaseModel):
 
 
 class ChatConfigurationError(RuntimeError):
+    """Signal missing provider settings before a hosted request is sent."""
+
     pass
 
 
 class ChatProviderError(RuntimeError):
+    """Represent a provider failure with a controlled message for API callers."""
+
     pass
 
 
 class ChatProviderTimeoutError(ChatProviderError):
+    """Identify a provider deadline failure for HTTP timeout handling."""
+
     pass
 
 
 class ChatProviderRateLimitError(ChatProviderError):
+    """Identify quota or rate limiting so callers can report temporary unavailability."""
+
     pass
 
 
 class ChatProviderUnavailableError(ChatProviderError):
+    """Identify temporary provider unavailability after bounded retries."""
+
     pass
 
 
 class InvalidModelResponseError(ChatProviderError):
+    """Signal invalid structure, citations or audit results that may permit one correction."""
+
     pass
 
 
 class ChatProvider(Protocol):
     """Generate a structured draft; model/provider failures must remain explicit."""
 
-    def generate(self, messages: list[ChatMessage]) -> ModelAnswer: ...
+    def generate(self, messages: list[ChatMessage]) -> ModelAnswer:
+        """Return a structured draft or raise a typed provider error; do not persist history."""
+        ...
 
 
 class ClaimVerifier(Protocol):
     """Assess a supplied candidate and evidence without generating a replacement."""
 
-    def verify(self, messages: list[ChatMessage]) -> AnswerVerification: ...
+    def verify(self, messages: list[ChatMessage]) -> AnswerVerification:
+        """Return an audit of supplied evidence and draft, or raise a typed provider error."""
+        ...
 
 
 def _gemini_generation_schema() -> dict[str, object]:
@@ -232,6 +250,8 @@ class GeminiChatProvider:
         timeout_seconds: int,
         thinking_level: str | None = None,
     ) -> None:
+        """Retain request settings; create and close the SDK client separately for each call."""
+
         self._api_key = api_key
         self._model = model
         self._temperature = temperature
@@ -319,6 +339,8 @@ class GeminiClaimVerifier:
         timeout_seconds: int,
         thinking_level: str,
     ) -> None:
+        """Retain audit settings and an initially empty record of the latest token usage."""
+
         self._api_key = api_key
         self._model = model
         self._max_tokens = max_tokens

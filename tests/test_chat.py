@@ -34,6 +34,8 @@ def evidence(
     filename: str = "policy.pdf",
     page: int = 1,
 ) -> RetrievedChunk:
+    """Build a controlled retrieved fragment with stable source identity and page provenance."""
+
     return RetrievedChunk(
         id=f"chunk-{source_number}",
         text=f"Policy evidence {source_number}",
@@ -55,6 +57,10 @@ def request_with_setup(
     """Start the test app, seed its live services, then send one chat request."""
 
     async def send() -> httpx.Response:
+        """Execute the request inside the application lifespan using an in-process ASGI
+        transport.
+        """
+
         transport = httpx.ASGITransport(app=application)
         async with application.router.lifespan_context(application):
             setup()
@@ -74,6 +80,8 @@ def request_with_setup(
 
 
 def seed_conversation(application: FastAPI, message_count: int = 0) -> None:
+    """Persist a test workspace and optionally alternating messages with distinct timestamps."""
+
     base_time = datetime(2026, 1, 1, tzinfo=UTC)
     with application.state.database.session_factory() as session:
         session.add(Conversation(id="conversation-a"))
@@ -99,7 +107,11 @@ def seed_conversation(application: FastAPI, message_count: int = 0) -> None:
 def test_chat_returns_verified_citation_and_persists_turn(
     application: FastAPI,
 ) -> None:
+    """Check that a passing fake audit produces PDF provenance and saves both message roles."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             evidence(1, filename="travel.pdf", page=2)
@@ -141,7 +153,11 @@ def test_chat_returns_verified_citation_and_persists_turn(
 def test_chunks_from_same_pdf_page_share_one_public_citation(
     application: FastAPI,
 ) -> None:
+    """Keep the public reference stable when retrieved fragments share a document page."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             evidence(1, filename="security.pdf", page=1),
@@ -174,7 +190,11 @@ def test_chunks_from_same_pdf_page_share_one_public_citation(
 def test_chat_uses_only_last_five_messages_in_chronological_order(
     application: FastAPI,
 ) -> None:
+    """Exclude older history while keeping role order and the current question separate."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application, message_count=7)
         application.state.fake_vector_store.search_results = [evidence(1)]
 
@@ -198,7 +218,11 @@ def test_chat_uses_only_last_five_messages_in_chronological_order(
 def test_invented_citation_is_rejected_without_partial_history(
     application: FastAPI,
 ) -> None:
+    """An unknown source must exhaust correction without leaving a saved user message."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_chat_provider.answer = ModelAnswer(
@@ -220,7 +244,11 @@ def test_invented_citation_is_rejected_without_partial_history(
 
 
 def test_unverified_numeric_citation_is_rejected(application: FastAPI) -> None:
+    """Reject public-looking numbers that bypass the internal source-ID mapping."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_chat_provider.answer = ModelAnswer(
@@ -240,7 +268,11 @@ def test_unverified_numeric_citation_is_rejected(application: FastAPI) -> None:
 
 
 def test_chat_retries_one_invalid_citation_response(application: FastAPI) -> None:
+    """Check that citation feedback permits a bounded redraft with the original inputs."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_chat_provider.answers = [
@@ -264,7 +296,11 @@ def test_chat_retries_one_invalid_citation_response(application: FastAPI) -> Non
 
 
 def test_repeated_invalid_citations_stop_after_one_correction(application: FastAPI) -> None:
+    """Reject malformed citations before spending an audit call, with at most two drafts."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_chat_provider.answers = [
@@ -290,7 +326,11 @@ def test_repeated_invalid_citations_stop_after_one_correction(application: FastA
 def test_unreadable_outputs_fail_without_invented_abstention(
     application: FastAPI,
 ) -> None:
+    """Invalid model structure must fail without fabricating a supported no-answer result."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_chat_provider.error = InvalidModelResponseError(
@@ -313,7 +353,11 @@ def test_unreadable_outputs_fail_without_invented_abstention(
 def test_semantic_verifier_rejection_drives_general_bounded_correction(
     application: FastAPI,
 ) -> None:
+    """Use audit defects to redraft while keeping correction history out of the next audit."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             replace(
@@ -388,7 +432,11 @@ def test_semantic_verifier_rejection_drives_general_bounded_correction(
 def test_verifier_receives_question_draft_sources_and_authority_as_untrusted_data(
     application: FastAPI,
 ) -> None:
+    """Check the audit payload boundary between instructions and serialized case data."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
 
@@ -408,7 +456,11 @@ def test_verifier_receives_question_draft_sources_and_authority_as_untrusted_dat
 def test_verifier_receives_full_text_for_cited_and_uncited_retrieved_sources(
     application: FastAPI,
 ) -> None:
+    """Let the auditor inspect retrieved omissions as well as the sources the draft cites."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             replace(evidence(1, filename="used-policy.pdf"), text="Used rule text."),
@@ -431,7 +483,11 @@ def test_verifier_receives_full_text_for_cited_and_uncited_retrieved_sources(
 def test_follow_up_question_uses_recent_user_topic_for_retrieval(
     application: FastAPI,
 ) -> None:
+    """Enrich a dependent query with the prior user topic and applicable authority hints."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         base_time = datetime(2026, 1, 1, tzinfo=UTC)
         with application.state.database.session_factory() as session:
             session.add(Conversation(id="conversation-a"))
@@ -473,7 +529,11 @@ def test_follow_up_question_uses_recent_user_topic_for_retrieval(
 def test_prompt_contains_resolved_structured_policy_authority(
     application: FastAPI,
 ) -> None:
+    """Pass extracted revision relationships into generation as structured source metadata."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         with application.state.database.session_factory() as session:
             session.add(Conversation(id="conversation-a"))
             session.add_all(
@@ -540,7 +600,11 @@ def test_prompt_contains_resolved_structured_policy_authority(
 def test_ordinary_question_does_not_receive_version_search_noise(
     application: FastAPI,
 ) -> None:
+    """Keep authority-expansion vocabulary out of a straightforward factual query."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
 
@@ -559,7 +623,11 @@ def test_ordinary_question_does_not_receive_version_search_noise(
 def test_confirmation_question_reuses_previous_user_topic(
     application: FastAPI,
 ) -> None:
+    """Retrieve the original subject when the user asks whether the last answer is correct."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         base_time = datetime(2026, 1, 1, tzinfo=UTC)
         with application.state.database.session_factory() as session:
             session.add(Conversation(id="conversation-a"))
@@ -600,7 +668,11 @@ def test_confirmation_question_reuses_previous_user_topic(
 def test_short_location_fragment_reuses_previous_user_topic(
     application: FastAPI,
 ) -> None:
+    """Carry the preceding subject into retrieval for an elliptical location follow-up."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         base_time = datetime(2026, 1, 1, tzinfo=UTC)
         with application.state.database.session_factory() as session:
             session.add(Conversation(id="conversation-a"))
@@ -636,7 +708,11 @@ def test_short_location_fragment_reuses_previous_user_topic(
 def test_document_conflict_follow_up_reuses_topic_and_authority_terms(
     application: FastAPI,
 ) -> None:
+    """Retrieve the preceding subject and lifecycle evidence for a document-conflict follow-up."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         base_time = datetime(2026, 1, 1, tzinfo=UTC)
         with application.state.database.session_factory() as session:
             session.add(Conversation(id="conversation-a"))
@@ -677,7 +753,11 @@ def test_document_conflict_follow_up_reuses_topic_and_authority_terms(
 def test_chat_adds_document_start_context_for_strongest_sources(
     application: FastAPI,
 ) -> None:
+    """Make selected documents' opening authority text available beside their later rules."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         current_rule = evidence(1, filename="current.pdf", page=2)
         old_rule = evidence(2, filename="old.pdf", page=2)
@@ -706,7 +786,11 @@ def test_chat_adds_document_start_context_for_strongest_sources(
 
 
 def test_provider_failure_leaves_no_partial_history(application: FastAPI) -> None:
+    """Map a provider failure to an API error without saving an incomplete turn."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_chat_provider.error = ChatProviderError(
@@ -723,7 +807,11 @@ def test_provider_failure_leaves_no_partial_history(application: FastAPI) -> Non
 def test_missing_provider_configuration_returns_service_unavailable(
     application: FastAPI,
 ) -> None:
+    """Report a missing API key without writing either chat message."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_chat_provider.error = ChatConfigurationError(
@@ -743,7 +831,11 @@ def test_missing_provider_configuration_returns_service_unavailable(
 def test_provider_timeout_returns_gateway_timeout_without_partial_history(
     application: FastAPI,
 ) -> None:
+    """Preserve the timeout response and empty history when hosted generation expires."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_chat_provider.error = ChatProviderTimeoutError(
@@ -761,7 +853,11 @@ def test_provider_timeout_returns_gateway_timeout_without_partial_history(
 
 
 def test_insufficient_context_response_has_no_citations(application: FastAPI) -> None:
+    """Return the controlled no-support status without unrelated source references."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_chat_provider.answer = ModelAnswer(
@@ -777,7 +873,11 @@ def test_insufficient_context_response_has_no_citations(application: FastAPI) ->
 
 
 def test_conflict_response_maps_both_sources(application: FastAPI) -> None:
+    """Preserve both sides of a reported conflict through public citation mapping."""
+
     def setup() -> None:
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             evidence(1, filename="old.pdf", page=1),
@@ -811,6 +911,8 @@ def test_conflict_response_maps_both_sources(application: FastAPI) -> None:
 
 
 def test_gemini_provider_requires_api_key() -> None:
+    """Reject missing credentials before attempting an SDK request."""
+
     provider = GeminiChatProvider(
         api_key=None,
         model="gemini-3.5-flash-lite",
@@ -831,12 +933,18 @@ def test_gemini_provider_requires_api_key() -> None:
 def test_gemini_provider_maps_roles_and_requests_structured_output(
     monkeypatch, thinking_level,
 ) -> None:
+    """Inspect fake SDK arguments, reasoning options and resource cleanup without model calls."""
+
     from google import genai
 
     captured: dict[str, object] = {}
 
     class FakeModels:
+        """Stand in for the SDK models endpoint without making hosted requests."""
+
         def generate_content(self, **kwargs):
+            """Capture request configuration and return a canned structured model response."""
+
             captured.update(kwargs)
             return type(
                 "Response",
@@ -852,16 +960,26 @@ def test_gemini_provider_maps_roles_and_requests_structured_output(
     clients = []
 
     class FakeClient:
+        """Model SDK context-manager cleanup and expose the controlled models endpoint."""
+
         def __init__(self, **kwargs) -> None:
+            """Register a fake SDK client with a models endpoint and an observable closed flag."""
+
             captured["client"] = kwargs
             self.models = FakeModels()
             clients.append(self)
             self.closed = False
 
         def __enter__(self):
+            """Return the fake client used by the provider's context manager."""
+
             return self
 
         def __exit__(self, *exception_details):
+            """Record cleanup so success and failure paths can assert that the client was
+            closed.
+            """
+
             self.closed = True
 
     monkeypatch.setattr(genai, "Client", FakeClient)
@@ -908,27 +1026,45 @@ def test_gemini_provider_maps_roles_and_requests_structured_output(
 def test_gemini_provider_maps_response_status_code_to_rate_limit(
     monkeypatch,
 ) -> None:
+    """Recognize the SDK response-status error shape and still close the client."""
+
     from google import genai
 
     class ProviderFailure(Exception):
+        """Supply a response-style rate-limit code for provider error translation."""
+
         status_code = "429"
 
     class FakeModels:
+        """Stand in for the SDK models endpoint without making hosted requests."""
+
         def generate_content(self, **kwargs):
+            """Raise the configured SDK-shaped failure to test application error mapping."""
+
             raise ProviderFailure
 
     clients = []
 
     class FakeClient:
+        """Model SDK context-manager cleanup and expose the controlled models endpoint."""
+
         def __init__(self, **kwargs) -> None:
+            """Register a fake SDK client with a models endpoint and an observable closed flag."""
+
             self.models = FakeModels()
             clients.append(self)
             self.closed = False
 
         def __enter__(self):
+            """Return the fake client used by the provider's context manager."""
+
             return self
 
         def __exit__(self, *exception_details):
+            """Record cleanup so success and failure paths can assert that the client was
+            closed.
+            """
+
             self.closed = True
 
     monkeypatch.setattr(genai, "Client", FakeClient)
@@ -954,12 +1090,18 @@ def test_gemini_provider_maps_response_status_code_to_rate_limit(
 def test_gemini_claim_verifier_requests_structured_comparison(
     monkeypatch,
 ) -> None:
+    """Check audit JSON configuration, role conversion and client cleanup with a fake SDK."""
+
     from google import genai
 
     captured: dict[str, object] = {}
 
     class FakeModels:
+        """Stand in for the SDK models endpoint without making hosted requests."""
+
         def generate_content(self, **kwargs):
+            """Capture request configuration and return a canned structured model response."""
+
             captured.update(kwargs)
             return type(
                 "Response",
@@ -975,16 +1117,26 @@ def test_gemini_claim_verifier_requests_structured_comparison(
     clients = []
 
     class FakeClient:
+        """Model SDK context-manager cleanup and expose the controlled models endpoint."""
+
         def __init__(self, **kwargs) -> None:
+            """Register a fake SDK client with a models endpoint and an observable closed flag."""
+
             captured["client"] = kwargs
             self.models = FakeModels()
             clients.append(self)
             self.closed = False
 
         def __enter__(self):
+            """Return the fake client used by the provider's context manager."""
+
             return self
 
         def __exit__(self, *exception_details):
+            """Record cleanup so success and failure paths can assert that the client was
+            closed.
+            """
+
             self.closed = True
 
     monkeypatch.setattr(genai, "Client", FakeClient)
@@ -1022,16 +1174,24 @@ def test_gemini_claim_verifier_requests_structured_comparison(
 def test_gemini_claim_verifier_retries_temporary_unavailability(
     monkeypatch,
 ) -> None:
+    """Recover from two temporary failures within the existing three-request bound."""
+
     from google import genai
 
     call_count = 0
 
     class TemporaryFailure(Exception):
+        """Supply a retryable provider status without a hosted call."""
+
         status_code = 503
         status = "UNAVAILABLE"
 
     class FakeModels:
+        """Stand in for the SDK models endpoint without making hosted requests."""
+
         def generate_content(self, **kwargs):
+            """Raise twice, then return a valid audit to exercise the bounded retry loop."""
+
             nonlocal call_count
             call_count += 1
             if call_count < 3:
@@ -1050,15 +1210,25 @@ def test_gemini_claim_verifier_retries_temporary_unavailability(
     clients = []
 
     class FakeClient:
+        """Model SDK context-manager cleanup and expose the controlled models endpoint."""
+
         def __init__(self, **kwargs) -> None:
+            """Register a fake SDK client with a models endpoint and an observable closed flag."""
+
             self.models = FakeModels()
             clients.append(self)
             self.closed = False
 
         def __enter__(self):
+            """Return the fake client used by the provider's context manager."""
+
             return self
 
         def __exit__(self, *exception_details):
+            """Record cleanup so success and failure paths can assert that the client was
+            closed.
+            """
+
             self.closed = True
 
     monkeypatch.setattr(genai, "Client", FakeClient)
@@ -1081,11 +1251,15 @@ def test_gemini_claim_verifier_retries_temporary_unavailability(
 
 
 def test_invalid_verifier_output_rechecks_draft_without_regeneration(application, monkeypatch):
+    """Spend the remaining attempt on a malformed audit while preserving the original draft."""
+
     verifier = application.state.fake_claim_verifier
     original_verify = verifier.verify
     call_count = 0
 
     def invalid_then_valid(messages):
+        """Fail the first audit structurally, then delegate so the test can count rechecks."""
+
         nonlocal call_count
         call_count += 1
         if call_count == 1:
@@ -1095,6 +1269,8 @@ def test_invalid_verifier_output_rechecks_draft_without_regeneration(application
     monkeypatch.setattr(verifier, "verify", invalid_then_valid)
 
     def setup():
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
 
@@ -1105,6 +1281,8 @@ def test_invalid_verifier_output_rechecks_draft_without_regeneration(application
 
 
 def test_verification_verdict_is_derived_from_issues():
+    """Make an issue list deterministically produce revision, independent of audit prose."""
+
     from pydantic import ValidationError
 
     verification = AnswerVerification(
@@ -1132,6 +1310,8 @@ def test_verification_verdict_is_derived_from_issues():
 
 
 def test_verification_assessment_can_exceed_previous_character_limit():
+    """Accept a longer audit explanation while preserving its reported defects."""
+
     assessment = (
         "The cited earlier permission and the governing policy's silence must be "
         "distinguished from explicit current authorization. "
@@ -1147,7 +1327,11 @@ def test_verification_assessment_can_exceed_previous_character_limit():
 
 
 def test_repeated_semantic_rejection_stops_without_persisting(application):
+    """Exhaust the correction budget without saving a draft rejected by both fake audits."""
+
     def setup():
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [evidence(1)]
         application.state.fake_claim_verifier.verification = AnswerVerification(
@@ -1165,6 +1349,8 @@ def test_repeated_semantic_rejection_stops_without_persisting(application):
 
 
 def test_verifier_status_disagreement_requires_a_cited_correction():
+    """Treat support-status disagreement as a revision even when the issue list is empty."""
+
     from app.services.claim_verification import require_verified_answer
 
     candidate = ModelAnswer(status="insufficient_context", answer="A supported rule is stated.")
@@ -1187,6 +1373,8 @@ def test_verifier_status_disagreement_requires_a_cited_correction():
 def test_valid_unsupported_topic_returns_uncited_abstention(application, question, source_text):
     """Exercise the pipeline with an independently classified valid abstention."""
     def setup():
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             replace(evidence(1), text=source_text)
@@ -1218,7 +1406,11 @@ def test_valid_unsupported_topic_returns_uncited_abstention(application, questio
      "Meals are limited to $40 per day. [S1] Without the trip duration and other costs, the exact total cannot be calculated."),
 ])
 def test_partially_supported_response_keeps_facts_and_citations(application, question, answer):
+    """Allow a cited partial answer to name a gap without discarding supported information."""
+
     def setup():
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             replace(evidence(1), text="Meals are limited to $40 per day.")
@@ -1237,9 +1429,13 @@ def test_partially_supported_response_keeps_facts_and_citations(application, que
 
 
 def test_partial_status_correction_preserves_supported_citations(application):
+    """Correct an inconsistent no-context label while retaining the supported facts."""
+
     text = "Meals are limited to $40 per day. [S1] Other costs are unspecified, so the total is unknown."
 
     def setup():
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             replace(evidence(1), text="Meals are limited to $40 per day.")
@@ -1263,7 +1459,11 @@ def test_partial_status_correction_preserves_supported_citations(application):
 
 
 def test_false_abstention_requires_supported_correction(application):
+    """Use audit feedback to replace an unsupported abstention with a cited response."""
+
     def setup():
+        """Install the scenario's saved state and provider behavior after application startup."""
+
         seed_conversation(application)
         application.state.fake_vector_store.search_results = [
             replace(evidence(1), text="Employees must wear a badge to enter the office.")

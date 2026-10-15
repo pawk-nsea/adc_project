@@ -6,6 +6,8 @@ from tests.conftest import FakeEmbeddingProvider
 
 
 def test_chunks_are_page_local_stable_and_within_token_limit() -> None:
+    """Check deterministic provenance, token bounds and source-word retention across chunking."""
+
     counter = FakeEmbeddingProvider()
     pages = [
         ParsedPage(1, " ".join(f"alpha{i}" for i in range(18))),
@@ -36,6 +38,8 @@ def test_chunks_are_page_local_stable_and_within_token_limit() -> None:
 
 
 def test_invalid_chunk_settings_are_rejected() -> None:
+    """Reject overlap/target/maximum combinations that cannot form a valid chunk window."""
+
     counter = FakeEmbeddingProvider()
 
     try:

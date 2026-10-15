@@ -13,6 +13,8 @@ SYSTEM_PROMPT_PATH = Path(__file__).parent.parent / "prompts" / "system.txt"
 
 @dataclass(frozen=True)
 class HistoryMessage:
+    """Carry a saved role/text pair without treating assistant prose as source evidence."""
+
     role: ChatRole
     content: str
 
@@ -59,6 +61,7 @@ def build_chat_messages(
             role="system",
             content=SYSTEM_PROMPT_PATH.read_text(encoding="utf-8").strip(),
         ),
+        # Preserve speaker boundaries instead of flattening old answers into source text.
         *[
             ChatMessage(role=message.role, content=message.content)
             for message in history

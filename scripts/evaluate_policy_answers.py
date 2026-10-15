@@ -58,6 +58,8 @@ class RecordingChatProvider:
     """Keep generated evaluation answers so failed semantic checks are reviewable."""
 
     def __init__(self, delegate: ChatProvider) -> None:
+        """Wrap generation with per-run answer and event lists for later manual inspection."""
+
         self._delegate = delegate
         self.answers: list[ModelAnswer] = []
         self.events: list[dict[str, object]] = []
@@ -82,6 +84,8 @@ class RecordingVerifier:
     """Record evaluation-only evidence and independent verdicts for manual diagnosis."""
 
     def __init__(self, delegate: GeminiClaimVerifier) -> None:
+        """Wrap the live verifier with an initially empty audit-event list."""
+
         self._delegate = delegate
         self.events: list[dict[str, object]] = []
 
@@ -107,10 +111,14 @@ class RecordingCorrections(logging.Handler):
     """Capture the existing validation/retry logs only inside this live runner."""
 
     def __init__(self) -> None:
+        """Initialize a log handler and a per-run list of correction messages."""
+
         super().__init__()
         self.events: list[str] = []
 
     def emit(self, record: logging.LogRecord) -> None:
+        """Keep the formatted validation message in memory for the evaluation report."""
+
         self.events.append(record.getMessage())
 
 
@@ -277,6 +285,10 @@ def main() -> None:
         }
 
         def save_report() -> None:
+            """Checkpoint completed cases to the requested output file for review or
+            resumption.
+            """
+
             if args.output:
                 args.output.parent.mkdir(parents=True, exist_ok=True)
                 args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")

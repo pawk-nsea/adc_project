@@ -157,6 +157,8 @@ def main() -> None:
     }
 
     def save_report() -> None:
+        """Save accumulated fixed-draft audit results when an output file was requested."""
+
         if args.output:
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")

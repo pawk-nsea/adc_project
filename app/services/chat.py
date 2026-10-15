@@ -48,15 +48,21 @@ MAX_ANSWER_ATTEMPTS = 2
 
 
 class UnknownConversationError(LookupError):
+    """Reject chat when no relational workspace exists for the supplied ID."""
+
     pass
 
 
 class ChatPersistenceError(RuntimeError):
+    """Report a failed message transaction after rolling back the completed turn."""
+
     pass
 
 
 @dataclass(frozen=True)
 class ChatResult:
+    """Carry the public answer, support status and mapped citations to the API layer."""
+
     conversation_id: str
     status: AnswerStatus
     answer: str
@@ -74,6 +80,8 @@ class ChatService:
         chat_provider: ChatProvider,
         claim_verifier: ClaimVerifier,
     ) -> None:
+        """Bind storage, retrieval and separate drafting/audit providers for a chat workflow."""
+
         self._database = database
         self._retrieval = retrieval_service
         self._provider = chat_provider

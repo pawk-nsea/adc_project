@@ -8,7 +8,11 @@ from app.services.pdf_parser import ParsedPage
 
 
 class TokenCounter(Protocol):
-    def count_tokens(self, text: str) -> int: ...
+    """Require only token counting so chunking can use real or controlled test tokenizers."""
+
+    def count_tokens(self, text: str) -> int:
+        """Count input tokens before any embedding-time truncation."""
+        ...
 
 
 @dataclass(frozen=True)
@@ -25,6 +29,8 @@ class TextChunk:
 
 
 def _join(parts: list[str]) -> str:
+    """Combine nonempty text units with paragraph breaks for chunk assembly."""
+
     return "\n\n".join(part for part in parts if part).strip()
 
 
@@ -49,6 +55,7 @@ def _split_words(text: str, counter: TokenCounter, target_tokens: int) -> list[s
 def _logical_units(text: str, counter: TokenCounter, target_tokens: int) -> list[str]:
     """Prefer paragraphs, then sentences, then words when a unit exceeds the target."""
 
+    # These are text boundaries, not a PDF layout model; tables can still span units.
     paragraphs = [part.strip() for part in re.split(r"\n\s*\n", text) if part.strip()]
     units: list[str] = []
     for paragraph in paragraphs:

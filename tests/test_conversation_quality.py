@@ -23,6 +23,8 @@ from tests.test_chat import evidence
     "But what are the rules for laboratory access?",
 ])
 def test_complete_question_with_clause_or_connector_keeps_its_own_topic(question):
+    """Relative clauses and opening conjunctions must not import the preceding topic."""
+
     query = build_retrieval_question(
         question=question,
         history=[HistoryMessage(role="user", content="What is the bicycle allowance?")],
@@ -37,6 +39,8 @@ def test_complete_question_with_clause_or_connector_keeps_its_own_topic(question
     "What if I encrypt it?", "Do I need the permit?", "Which one is newest?",
 ])
 def test_real_references_still_retrieve_the_previous_topic(question):
+    """Keep useful context inheritance for short questions with genuine dependent references."""
+
     query = build_retrieval_question(
         question=question,
         history=[HistoryMessage(role="user", content="May I use the laboratory locker?")],
@@ -47,6 +51,8 @@ def test_real_references_still_retrieve_the_previous_topic(question):
 
 
 def test_verifier_current_task_is_distinct_from_user_reference_facts():
+    """Separate the actual question from prior user facts and exclude assistant assertions."""
+
     question = "Which supplies that need refrigeration may I carry?"
     messages = build_verification_messages(
         question=question,
@@ -66,6 +72,8 @@ def test_verifier_current_task_is_distinct_from_user_reference_facts():
 
 
 def test_complete_question_does_not_inherit_unrelated_topic() -> None:
+    """Ensure a fully specified new question replaces the previous retrieval subject."""
+
     query = build_retrieval_question(
         question="May a visiting scientist operate the coastal sensor?",
         history=[
@@ -79,6 +87,8 @@ def test_complete_question_does_not_inherit_unrelated_topic() -> None:
 
 
 def test_short_follow_up_skips_feedback_and_keeps_latest_policy_topic() -> None:
+    """Skip a relevance complaint when choosing the preceding substantive user question."""
+
     query = build_retrieval_question(
         question="And for interns?",
         history=[
@@ -101,6 +111,8 @@ def test_short_follow_up_skips_feedback_and_keeps_latest_policy_topic() -> None:
 
 
 def test_short_definite_noun_question_keeps_prior_context() -> None:
+    """Retain the topic needed to interpret a short reference to an already discussed item."""
+
     query = build_retrieval_question(
         question="Do I need the permit?",
         history=[
@@ -119,7 +131,11 @@ def test_short_definite_noun_question_keeps_prior_context() -> None:
 def test_multi_turn_flow_is_focused_and_uses_resolved_user_context(
     application: FastAPI,
 ) -> None:
+    """Exercise topic switching and genuine follow-ups using persisted fake-provider turns."""
+
     async def run_conversation() -> None:
+        """Exercise successive HTTP turns against the same workspace and persisted history."""
+
         async with application.router.lifespan_context(application):
             with application.state.database.session_factory() as session:
                 session.add(Conversation(id="conversation-a"))

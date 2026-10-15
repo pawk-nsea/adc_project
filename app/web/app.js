@@ -22,6 +22,7 @@ const elements = {
   workspaceState: document.querySelector("#workspace-state"),
 };
 
+// Browser state holds pending turns as well as server-confirmed records.
 const state = {
   conversationId: crypto.randomUUID(),
   conversations: [],
@@ -35,6 +36,7 @@ const state = {
 // now intentionally starts with a fresh chat while keeping saved chats server-side.
 localStorage.removeItem("apex-policy-assistant-conversation");
 
+/** Refresh the live region after a short delay so repeated messages can be announced. */
 function announce(message) {
   elements.liveStatus.textContent = "";
   window.setTimeout(() => {
@@ -42,6 +44,7 @@ function announce(message) {
   }, 20);
 }
 
+/** Format an upload timestamp, falling back to a neutral label for invalid dates. */
 function safeDate(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime())
@@ -49,6 +52,7 @@ function safeDate(value) {
     : `Indexed ${date.toLocaleDateString(undefined, { day: "numeric", month: "short" })}`;
 }
 
+/** Extract a readable API error from either a string or validation-error list. */
 function parseError(payload, fallback) {
   if (typeof payload?.detail === "string") {
     return payload.detail;
@@ -59,6 +63,7 @@ function parseError(payload, fallback) {
   return fallback;
 }
 
+/** Explain the HTTP failure and the server contract that incomplete turns are not saved. */
 function explainChatFailure(status, detail) {
   if (status === 504) {
     return `${detail} Gemini timed out; no chat messages were saved.`;
@@ -72,6 +77,7 @@ function explainChatFailure(status, detail) {
   return `${detail} No chat messages were saved.`;
 }
 
+/** Read the response body, returning an empty object when a server error is not JSON. */
 async function readJson(response) {
   try {
     return await response.json();
@@ -80,18 +86,21 @@ async function readJson(response) {
   }
 }
 
+/** Update the active workspace ID and its visible/copyable display. */
 function setConversationId(conversationId) {
   state.conversationId = conversationId;
   elements.conversationId.textContent = conversationId;
   elements.conversationId.title = conversationId;
 }
 
+/** Format saved-chat activity without displaying an invalid date. */
 function safeActivityDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Saved chat";
   return `Updated ${date.toLocaleDateString(undefined, { day: "numeric", month: "short" })}`;
 }
 
+/** Rebuild sidebar buttons from saved metadata and highlight the active workspace. */
 function renderConversationHistory() {
   elements.conversationList.replaceChildren();
   elements.historyEmpty.textContent = "Your saved policy chats will appear here.";
@@ -127,6 +136,7 @@ function renderConversationHistory() {
   });
 }
 
+/** Fetch saved workspaces; retain existing sidebar data if refreshing fails. */
 async function refreshConversationHistory() {
   try {
     const response = await fetch("/conversations");
@@ -145,6 +155,7 @@ async function refreshConversationHistory() {
   }
 }
 
+/** Derive input availability and source-readiness labels from current browser state. */
 function setControls() {
   const hasDocuments = state.documents.length > 0;
   const canSend = hasDocuments && !state.busy && elements.messageInput.value.trim().length > 0;
@@ -163,6 +174,7 @@ function setControls() {
   });
 }
 
+/** Resolve a citation to an uploaded source, allowing only unambiguous legacy filenames. */
 function sourceForCitation(citation) {
   // Legacy citations lack IDs; use the filename only when it identifies one source.
   if (citation.document_id) {
@@ -172,6 +184,7 @@ function sourceForCitation(citation) {
   return filenameMatches.length === 1 ? filenameMatches[0] : undefined;
 }
 
+/** Build a workspace-scoped PDF URL and let the browser viewer interpret the page fragment. */
 function sourceUrl(documentId, page = 1) {
   // The browser's PDF viewer handles #page; the server checks workspace membership.
   const documentPath = encodeURIComponent(documentId);
@@ -179,6 +192,7 @@ function sourceUrl(documentId, page = 1) {
   return `/documents/${documentPath}/content?conversation_id=${conversation}#page=${page}`;
 }
 
+/** Rebuild indexed source rows and link only uploads whose original PDF is retained. */
 function renderSources() {
   elements.sourceList.replaceChildren();
   elements.sourceCount.textContent = String(state.documents.length);
@@ -229,6 +243,7 @@ function renderSources() {
   setControls();
 }
 
+/** Return a source link or an unavailable-preview label for a structured citation. */
 function createCitation(citation) {
   const source = sourceForCitation(citation);
   const canOpen = Boolean(source?.source_view_available);
@@ -253,6 +268,7 @@ function createCitation(citation) {
   return item;
 }
 
+/** Build one message element with plain-text content and separately constructed source links. */
 function createMessage(message, options = {}) {
   const wrapper = document.createElement("article");
   wrapper.className = `message message-${message.role}`;
@@ -301,6 +317,7 @@ function createMessage(message, options = {}) {
   return wrapper;
 }
 
+/** Replace rendered message rows from local state and scroll to the latest content. */
 function renderMessages() {
   elements.messages.querySelectorAll(".message").forEach((message) => message.remove());
   elements.welcome.hidden = state.messages.length > 0;
@@ -308,12 +325,14 @@ function renderMessages() {
   scrollToLatest();
 }
 
+/** Scroll after layout updates so the newest message or progress row is visible. */
 function scrollToLatest() {
   window.requestAnimationFrame(() => {
     elements.messages.scrollTop = elements.messages.scrollHeight;
   });
 }
 
+/** Append an accessible in-progress row while the chat request is pending. */
 function showThinking() {
   const message = createMessage({ role: "assistant", content: "" });
   message.id = "thinking-message";
@@ -327,21 +346,25 @@ function showThinking() {
   scrollToLatest();
 }
 
+/** Remove any in-progress rows when the chat request settles. */
 function hideThinking() {
   document.querySelector("#thinking-message")?.remove();
 }
 
+/** Expose a chat failure in the error panel and the assistive-technology live region. */
 function showChatError(message) {
   elements.chatError.textContent = message;
   elements.chatError.hidden = false;
   announce(message);
 }
 
+/** Hide the previous chat failure before a new interaction. */
 function clearChatError() {
   elements.chatError.hidden = true;
   elements.chatError.textContent = "";
 }
 
+/** Append a temporary upload row and return handles for progress or error updates. */
 function makeUploadStatus(file) {
   const item = document.createElement("div");
   item.className = "upload-item";
@@ -360,6 +383,7 @@ function makeUploadStatus(file) {
   return { item, status };
 }
 
+/** Upload selected PDFs sequentially, preserving per-file errors and successful source entries. */
 async function uploadFiles(fileList) {
   const files = [...fileList];
   if (!files.length || state.uploading) return;
@@ -403,6 +427,7 @@ async function uploadFiles(fileList) {
   setControls();
 }
 
+/** Show the pending question, request a verified answer, and retain failed input for retry. */
 async function sendQuestion(question) {
   if (state.busy || !state.documents.length || !question.trim()) return;
   const cleanQuestion = question.trim();
@@ -462,6 +487,7 @@ async function sendQuestion(question) {
   }
 }
 
+/** Render a new empty chat and load the sidebar of server-persisted workspaces. */
 async function initializeWorkspace() {
   setConversationId(state.conversationId);
   renderSources();
@@ -470,6 +496,7 @@ async function initializeWorkspace() {
   announce("New empty chat ready.");
 }
 
+/** Restore sources and messages from a saved workspace, reporting fetch failures locally. */
 async function openConversation(conversationId) {
   // Prevent switching during an upload or chat response tied to the current workspace.
   if (state.busy || state.uploading || conversationId === state.conversationId) return;
@@ -493,6 +520,7 @@ async function openConversation(conversationId) {
   }
 }
 
+/** Confirm permanent server deletion and clear local state when deleting the active chat. */
 async function deleteConversation(conversationId, title) {
   if (state.busy || state.uploading) return;
   if (!window.confirm(`Delete “${title}”? This permanently removes its messages and indexed documents.`)) {
@@ -521,6 +549,7 @@ async function deleteConversation(conversationId, title) {
   }
 }
 
+/** Switch to a fresh browser-generated ID while preserving previously saved server data. */
 async function startNewWorkspace() {
   if (state.busy || state.uploading) return;
   const hasContent = state.documents.length > 0 || state.messages.length > 0;
@@ -539,6 +568,7 @@ async function startNewWorkspace() {
   announce("New empty workspace created.");
 }
 
+// Delegate browser events to the same upload/chat operations used by buttons.
 elements.fileInput.addEventListener("change", (event) => uploadFiles(event.target.files));
 
 ["dragenter", "dragover"].forEach((eventName) => {
@@ -568,6 +598,7 @@ elements.messageInput.addEventListener("input", () => {
   setControls();
 });
 
+// Enter submits; Shift+Enter keeps the native multiline-input behavior.
 elements.messageInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
@@ -594,6 +625,7 @@ elements.copyIdButton.addEventListener("click", async () => {
 
 elements.newWorkspaceButton.addEventListener("click", startNewWorkspace);
 
+// Delegation keeps the handlers valid when sidebar rows are rebuilt after a request.
 elements.conversationList.addEventListener("click", (event) => {
   const deleteButton = event.target.closest("[data-delete-conversation-id]");
   if (deleteButton) {

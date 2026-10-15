@@ -38,6 +38,7 @@ echo "API documentation: ${docs_url}"
 echo "Health check:      ${health_url}"
 echo "Stop the server with Ctrl+C."
 
+# Poll health briefly before opening the browser; server startup continues independently.
 open_app_when_ready() {
     for _ in {1..40}; do
         if "${python_executable}" -c \
@@ -62,6 +63,7 @@ if [[ "${open_browser}" == "true" ]]; then
     fi
 fi
 
+# Use an array so each launch option remains one argument even if values contain spaces.
 uvicorn_arguments=(
     "app.main:app"
     "--host" "${app_host}"

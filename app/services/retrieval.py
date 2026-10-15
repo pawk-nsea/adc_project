@@ -17,6 +17,10 @@ class RetrievalService:
         vector_store: VectorStore,
         default_top_k: int = 5,
     ) -> None:
+        """Bind the shared embedding space and store, rejecting a nonpositive default hit
+        count.
+        """
+
         if default_top_k < 1:
             raise ValueError("default_top_k must be at least 1.")
         self._embeddings = embedding_provider
@@ -154,6 +158,7 @@ def _consolidate_pages(chunks: list[RetrievedChunk]) -> list[RetrievedChunk]:
                 start = list(re.finditer(r"\S+", chunk.text))[overlap].start()
                 fragments.append(chunk.text[start:])
             previous_index = chunk.chunk_index
+        # A shared page citation does not imply that every fragment of that page was read.
         consolidated.append(replace(page_chunks[0], text="\n\n".join(fragments)))
     return consolidated
 

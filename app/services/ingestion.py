@@ -20,24 +20,34 @@ class InvalidPdfError(ValueError):
     """Invalid PDF input with the HTTP status used by the upload endpoint."""
 
     def __init__(self, message: str, status_code: int = 422) -> None:
+        """Attach the endpoint status used to distinguish unsupported input from invalid PDFs."""
+
         super().__init__(message)
         self.status_code = status_code
 
 
 class UploadTooLargeError(ValueError):
+    """Reject bytes exceeding the configured upload limit."""
+
     pass
 
 
 class DuplicateDocumentError(ValueError):
+    """Reject identical content already processing or indexed in the same workspace."""
+
     pass
 
 
 class IngestionError(RuntimeError):
+    """Report indexing or cleanup failure after the service attempts compensating cleanup."""
+
     pass
 
 
 @dataclass(frozen=True)
 class IngestionResult:
+    """Describe a completed upload using the identifiers and counts saved during indexing."""
+
     conversation_id: str
     document_id: str
     filename: str
@@ -57,6 +67,8 @@ class IngestionService:
         vector_store: VectorStore,
         settings: Settings,
     ) -> None:
+        """Bind storage, local embeddings and size/chunk settings without starting ingestion."""
+
         self._database = database
         self._embeddings = embedding_provider
         self._vectors = vector_store
@@ -79,6 +91,7 @@ class IngestionService:
 
         content_hash = sha256(content).hexdigest()
         with self._database.session_factory() as session:
+            # Failed attempts remain inspectable but do not prevent retrying the same PDF.
             duplicate = session.scalar(
                 select(Document).where(
                     Document.conversation_id == conversation_id,

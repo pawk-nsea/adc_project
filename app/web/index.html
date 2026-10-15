@@ -27,6 +27,7 @@
       </header>
 
       <main class="workspace">
+        <!-- Saved chats and indexed PDFs are populated by the browser module. -->
         <aside class="sources-panel" aria-label="Saved chats and policy sources">
           <div class="panel-heading">
             <div>
@@ -36,6 +37,7 @@
           </div>
 
           <p class="history-empty" id="history-empty">Your saved policy chats will appear here.</p>
+          <!-- Event delegation uses this stable container when saved-chat rows are replaced. -->
           <ul class="conversation-list" id="conversation-list" aria-labelledby="chats-heading"></ul>
 
           <div class="section-heading">

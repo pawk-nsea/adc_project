@@ -16,6 +16,8 @@ class Database:
     """Own the SQLAlchemy engine and create short-lived sessions."""
 
     def __init__(self, database_url: str) -> None:
+        """Prepare local storage and session creation without creating tables yet."""
+
         self.database_url = database_url
         self._prepare_sqlite_directory()
 

@@ -24,18 +24,26 @@ class FakeEmbeddingProvider:
     max_input_tokens = 256
 
     def __init__(self) -> None:
+        """Start a fresh record of query text submitted by the service."""
+
         self.query_texts: list[str] = []
 
     def count_tokens(self, text: str) -> int:
+        """Approximate token size with whitespace words plus two synthetic special tokens."""
+
         return len(text.split()) + 2
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        """Produce deterministic four-value vectors without invoking an embedding model."""
+
         return [
             [float(len(text)), float(index), 0.5, 1.0]
             for index, text in enumerate(texts)
         ]
 
     def embed_query(self, text: str) -> list[float]:
+        """Record the query and return its synthetic vector for wiring assertions."""
+
         self.query_texts.append(text)
         return self.embed_documents([text])[0]
 
@@ -44,6 +52,8 @@ class FakeVectorStore:
     """Store uploads in memory and return preset retrieval results for service tests."""
 
     def __init__(self) -> None:
+        """Create isolated records, canned search results and an opt-in partial-write failure."""
+
         self.records: dict[str, dict[str, object]] = {}
         self.deleted_document_ids: list[str] = []
         self.fail_on_add = False
@@ -60,6 +70,8 @@ class FakeVectorStore:
         embedding_model: str,
         chunking_version: str,
     ) -> None:
+        """Store all pairs, then optionally fail so ingestion must clean up partial writes."""
+
         for chunk, embedding in zip(chunks, embeddings, strict=True):
             self.records[chunk.id] = {
                 "chunk": chunk,
@@ -72,6 +84,8 @@ class FakeVectorStore:
             raise RuntimeError("simulated vector-store failure")
 
     def delete_document(self, document_id: str) -> None:
+        """Record cleanup attempts and remove that document from the in-memory records."""
+
         self.deleted_document_ids.append(document_id)
         self.records = {
             key: record
@@ -80,6 +94,8 @@ class FakeVectorStore:
         }
 
     def count_document_chunks(self, document_id: str) -> int:
+        """Count stored records for the ingestion completeness check."""
+
         return sum(
             record["chunk"].document_id == document_id
             for record in self.records.values()
@@ -93,6 +109,8 @@ class FakeVectorStore:
         embedding_model: str,
         top_k: int,
     ) -> list[RetrievedChunk]:
+        """Return the configured leading hits; this fake does not compute vector similarity."""
+
         return self.search_results[:top_k]
 
     def keyword_search(
@@ -103,6 +121,8 @@ class FakeVectorStore:
         embedding_model: str,
         top_k: int,
     ) -> list[RetrievedChunk]:
+        """Return canned lexical hits; production scoring and filters are tested separately."""
+
         return self.keyword_search_results[:top_k]
 
     def get_document_start_chunks(
@@ -112,6 +132,8 @@ class FakeVectorStore:
         embedding_model: str,
         document_ids: list[str],
     ) -> list[RetrievedChunk]:
+        """Select configured document starts by workspace and requested document IDs."""
+
         return [
             result
             for result in self.document_start_results
@@ -126,6 +148,8 @@ class FakeVectorStore:
         embedding_model: str,
         page_keys: list[tuple[str, int]],
     ) -> list[RetrievedChunk]:
+        """Select configured page companions by workspace and document/page pair."""
+
         requested_pages = set(page_keys)
         return [
             result
@@ -139,6 +163,8 @@ class FakeChatProvider:
     """Record prompts and return queued drafts or a configured provider failure."""
 
     def __init__(self) -> None:
+        """Provide a default cited draft and opt-in queued replies or a provider exception."""
+
         self.answer = ModelAnswer(
             status="answered",
             answer="The policy answer is supported. [S1]",
@@ -148,6 +174,8 @@ class FakeChatProvider:
         self.answers: list[ModelAnswer] = []
 
     def generate(self, messages: list[ChatMessage]) -> ModelAnswer:
+        """Record the prompt, then raise the configured error or consume the next canned draft."""
+
         self.calls.append(messages)
         if self.error:
             raise self.error
@@ -158,11 +186,15 @@ class FakeClaimVerifier:
     """Return configured audits, otherwise approve; this does not inspect evidence."""
 
     def __init__(self) -> None:
+        """Initialize canned audit queues and captured request messages."""
+
         self.verification: AnswerVerification | None = None
         self.verifications: list[AnswerVerification] = []
         self.calls: list[list[ChatMessage]] = []
 
     def verify(self, messages: list[ChatMessage]) -> AnswerVerification:
+        """Consume a configured audit or echo the candidate status in a synthetic approval."""
+
         self.calls.append(messages)
         if self.verifications:
             return self.verifications.pop(0)

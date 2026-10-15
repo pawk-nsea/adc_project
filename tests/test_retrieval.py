@@ -57,6 +57,8 @@ def test_selected_lower_ranked_page_is_completed_before_header_expansion():
 
 
 def test_retrieval_service_embeds_question_and_applies_limit() -> None:
+    """Check query embedding and result limits at the retrieval/provider boundary."""
+
     embeddings = FakeEmbeddingProvider()
     vectors = FakeVectorStore()
     vectors.search_results = [
@@ -88,6 +90,8 @@ def test_retrieval_service_embeds_question_and_applies_limit() -> None:
 
 
 def test_hybrid_reranking_promotes_exact_keyword_evidence() -> None:
+    """Give an exact policy identifier enough lexical weight to select its matching evidence."""
+
     embeddings = FakeEmbeddingProvider()
     vectors = FakeVectorStore()
     semantic = RetrievedChunk(
@@ -130,6 +134,8 @@ def test_hybrid_reranking_promotes_exact_keyword_evidence() -> None:
 
 
 def test_exact_term_detection_supports_unfamiliar_currencies() -> None:
+    """Recognize identifiers and numeric currency expressions without a fixed policy list."""
+
     terms = _exact_query_terms(
         "Compare DKK 375, EUR 410.50, £200 and policy OBS-SAFE-1."
     )
@@ -138,6 +144,8 @@ def test_exact_term_detection_supports_unfamiliar_currencies() -> None:
 
 
 def test_retrieval_includes_start_context_for_selected_documents() -> None:
+    """Include authority-bearing opening fragments for every initially selected document."""
+
     embeddings = FakeEmbeddingProvider()
     vectors = FakeVectorStore()
     vectors.search_results = [
@@ -191,6 +199,8 @@ def test_retrieval_includes_start_context_for_selected_documents() -> None:
 
 
 def test_retrieval_adds_missing_chunks_from_strongest_pages() -> None:
+    """Recover companion rules on selected pages while retaining the original exceptions."""
+
     embeddings = FakeEmbeddingProvider()
     vectors = FakeVectorStore()
     current_exception = RetrievedChunk(
@@ -274,6 +284,8 @@ def test_retrieval_rejects_invalid_inputs(
     question: str,
     top_k: int | None,
 ) -> None:
+    """Reject blank scope/query inputs and hit limits outside the supported range."""
+
     service = RetrievalService(
         embedding_provider=FakeEmbeddingProvider(),
         vector_store=FakeVectorStore(),
@@ -288,6 +300,8 @@ def test_retrieval_rejects_invalid_inputs(
 
 
 def _chunk(chunk_id: str, conversation_id: str, text: str) -> TextChunk:
+    """Create a one-page chunk with unique provenance for real local Chroma tests."""
+
     return TextChunk(
         id=chunk_id,
         document_id=f"document-{chunk_id}",
@@ -302,6 +316,8 @@ def _chunk(chunk_id: str, conversation_id: str, text: str) -> TextChunk:
 def test_chroma_search_ranks_by_cosine_and_isolates_conversations(
     tmp_path: Path,
 ) -> None:
+    """Check real local Chroma ordering and workspace filtering using synthetic vectors."""
+
     vectors = ChromaVectorStore(
         path=str(tmp_path / "chroma"),
         collection_name="retrieval_test",
@@ -334,6 +350,8 @@ def test_chroma_search_ranks_by_cosine_and_isolates_conversations(
 def test_chroma_keyword_search_finds_exact_policy_terms_and_isolates_chat(
     tmp_path: Path,
 ) -> None:
+    """Find exact lexical evidence without returning another workspace's chunks."""
+
     vectors = ChromaVectorStore(
         path=str(tmp_path / "chroma"),
         collection_name="keyword_test",
@@ -362,6 +380,8 @@ def test_chroma_keyword_search_finds_exact_policy_terms_and_isolates_chat(
 
 
 def test_chroma_search_filters_embedding_model(tmp_path: Path) -> None:
+    """Exclude vectors labeled with a different embedding model."""
+
     vectors = ChromaVectorStore(
         path=str(tmp_path / "chroma"),
         collection_name="model_filter_test",
@@ -386,6 +406,8 @@ def test_chroma_search_filters_embedding_model(tmp_path: Path) -> None:
 def test_chroma_search_returns_only_best_chunk_per_document_page(
     tmp_path: Path,
 ) -> None:
+    """Prefer distinct pages when they fill the available initial-hit budget."""
+
     vectors = ChromaVectorStore(
         path=str(tmp_path / "chroma"),
         collection_name="page_diversity_test",
@@ -439,6 +461,8 @@ def test_chroma_search_returns_only_best_chunk_per_document_page(
 def test_chroma_search_uses_remaining_budget_for_same_page_evidence(
     tmp_path: Path,
 ) -> None:
+    """Use spare hit capacity for additional same-page rules after preserving page diversity."""
+
     vectors = ChromaVectorStore(
         path=str(tmp_path / "chroma"),
         collection_name="page_fill_test",
@@ -494,6 +518,8 @@ def test_chroma_search_uses_remaining_budget_for_same_page_evidence(
 
 
 def test_chroma_returns_all_chunks_for_requested_page(tmp_path: Path) -> None:
+    """Fetch page companions in chunk order while excluding unrequested pages."""
+
     vectors = ChromaVectorStore(
         path=str(tmp_path / "chroma"),
         collection_name="page_context_test",
@@ -547,6 +573,8 @@ def test_chroma_returns_all_chunks_for_requested_page(tmp_path: Path) -> None:
 
 
 def test_retrieval_evaluation_set_is_well_formed() -> None:
+    """Validate reusable retrieval questions and their expected PDF/page references."""
+
     cases = json.loads(
         Path("evaluation/retrieval_cases.json").read_text(encoding="utf-8")
     )
@@ -565,6 +593,8 @@ def test_retrieval_evaluation_set_is_well_formed() -> None:
 
 
 def test_natural_answer_evaluation_set_is_well_formed() -> None:
+    """Check IDs, statuses and evidence patterns in the natural-language answer fixtures."""
+
     cases = json.loads(
         Path("evaluation/natural_answer_cases.json").read_text(encoding="utf-8")
     )

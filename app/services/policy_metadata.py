@@ -87,6 +87,8 @@ class PolicyAuthorityMetadata:
 
 
 def _optional_string(value: object) -> str | None:
+    """Convert a present value to trimmed text, treating an empty result as missing."""
+
     if value is None:
         return None
     cleaned = str(value).strip()
@@ -94,6 +96,8 @@ def _optional_string(value: object) -> str | None:
 
 
 def _field(text: str, labels: tuple[str, ...]) -> str | None:
+    """Read the first complete labeled line, allowing case differences in known labels."""
+
     label_pattern = "|".join(re.escape(label) for label in labels)
     match = re.search(rf"^(?:{label_pattern})\s*:\s*([^\n]+)$", text, re.I | re.M)
     return match.group(1).strip() if match else None
@@ -138,6 +142,8 @@ def _subject_terms(text: str) -> tuple[str, ...]:
 
 
 def _has_sortable_date(metadata: PolicyAuthorityMetadata) -> bool:
+    """Recognize the ISO-shaped date strings used for lexical version ordering."""
+
     return bool(
         metadata.effective_date
         and re.fullmatch(r"\d{4}-\d{2}-\d{2}", metadata.effective_date)
@@ -270,6 +276,7 @@ def resolve_policy_authority(
         dated = [item for item in group if _has_sortable_date(item[1])]
         if len(dated) < 2:
             continue
+        # Order retrieved revisions; this does not test today's date or employee scope.
         dated.sort(key=lambda item: item[1].effective_date or "")
         current_id, current = dated[-1]
         if not current.supersedes_prior_versions:
