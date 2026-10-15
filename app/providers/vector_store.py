@@ -1,5 +1,8 @@
-"""Vector-store boundary and persistent Chroma implementation."""
+"""Persist policy chunks in Chroma and provide scoped semantic, keyword and page reads."""
 
+import math
+import re
+from collections import Counter
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -8,7 +11,7 @@ from app.services.chunker import TextChunk
 
 @dataclass(frozen=True)
 class RetrievedChunk:
-    """One ranked vector-search result with citation provenance."""
+    """Retrieved text and provenance; scores depend on semantic, keyword or context origin."""
 
     id: str
     text: str
@@ -19,9 +22,13 @@ class RetrievedChunk:
     chunk_index: int
     distance: float
     similarity: float
+    keyword_score: float = 0.0
+    rerank_score: float = 0.0
 
 
 class VectorStore(Protocol):
+    """Storage operations shared by ingestion, retrieval and workspace deletion."""
+
     def add_chunks(
         self,
         chunks: list[TextChunk],
@@ -38,6 +45,15 @@ class VectorStore(Protocol):
     def search(
         self,
         query_embedding: list[float],
+        *,
+        conversation_id: str,
+        embedding_model: str,
+        top_k: int,
+    ) -> list[RetrievedChunk]: ...
+
+    def keyword_search(
+        self,
+        query: str,
         *,
         conversation_id: str,
         embedding_model: str,
@@ -82,6 +98,8 @@ class ChromaVectorStore:
         embedding_model: str,
         chunking_version: str,
     ) -> None:
+        """Store one embedding per chunk with source/model metadata; reject length mismatch."""
+
         if len(chunks) != len(embeddings):
             raise ValueError("Each chunk must have exactly one embedding.")
         self._collection.add(
@@ -189,6 +207,95 @@ class ChromaVectorStore:
                 break
         return [candidate for candidate in candidates if candidate.id in selected_ids]
 
+    def keyword_search(
+        self,
+        query: str,
+        *,
+        conversation_id: str,
+        embedding_model: str,
+        top_k: int,
+    ) -> list[RetrievedChunk]:
+        """Scan this workspace/model's stored text and rank matching words with BM25.
+
+        BM25 rewards distinctive terms and adjusts for chunk length. It is lexical
+        support for semantic retrieval, not a learned judgment of policy relevance.
+        """
+
+        query_terms = _search_terms(query)
+        if not query_terms:
+            return []
+        result = self._collection.get(
+            where={
+                "$and": [
+                    {"conversation_id": conversation_id},
+                    {"embedding_model": embedding_model},
+                ]
+            },
+            include=["documents", "metadatas"],
+        )
+        records: list[tuple[str, str, dict[str, object], list[str]]] = []
+        for chunk_id, document, metadata in zip(
+            result.get("ids") or [],
+            result.get("documents") or [],
+            result.get("metadatas") or [],
+            strict=True,
+        ):
+            if document is None or metadata is None:
+                raise ValueError("Vector record is missing text or provenance metadata.")
+            records.append((chunk_id, document, metadata, _search_terms(document)))
+        if not records:
+            return []
+
+        document_frequency = Counter(
+            term
+            for term in set(query_terms)
+            for _, _, _, terms in records
+            if term in set(terms)
+        )
+        average_length = sum(len(record[3]) for record in records) / len(records)
+        query_frequency = Counter(query_terms)
+        scored: list[RetrievedChunk] = []
+        for chunk_id, document, metadata, terms in records:
+            frequencies = Counter(terms)
+            score = 0.0
+            for term, query_count in query_frequency.items():
+                frequency = frequencies[term]
+                if not frequency:
+                    continue
+                containing_documents = document_frequency[term]
+                inverse_frequency = math.log(
+                    1 + (len(records) - containing_documents + 0.5)
+                    / (containing_documents + 0.5)
+                )
+                length_normalizer = 1.2 * (
+                    1 - 0.75 + 0.75 * len(terms) / max(average_length, 1.0)
+                )
+                score += query_count * inverse_frequency * (
+                    frequency * 2.2 / (frequency + length_normalizer)
+                )
+            if score <= 0:
+                continue
+            # Keep keyword scores bounded; similarity stays zero for lexical-only hits.
+            normalized_score = score / (1.0 + score)
+            scored.append(
+                RetrievedChunk(
+                    id=chunk_id,
+                    text=document,
+                    conversation_id=str(metadata["conversation_id"]),
+                    document_id=str(metadata["document_id"]),
+                    filename=str(metadata["filename"]),
+                    page_number=int(metadata["page_number"]),
+                    chunk_index=int(metadata["chunk_index"]),
+                    distance=1.0 - normalized_score,
+                    similarity=0.0,
+                    keyword_score=normalized_score,
+                )
+            )
+        return sorted(
+            scored,
+            key=lambda chunk: (-chunk.keyword_score, chunk.document_id, chunk.chunk_index),
+        )[:top_k]
+
     def get_document_start_chunks(
         self,
         *,
@@ -196,7 +303,7 @@ class ChromaVectorStore:
         embedding_model: str,
         document_ids: list[str],
     ) -> list[RetrievedChunk]:
-        """Return the first stored chunk for each requested document in order."""
+        """Return each document's earliest indexed chunk, which may not be PDF page one."""
 
         starts: list[RetrievedChunk] = []
         for document_id in dict.fromkeys(document_ids):
@@ -297,3 +404,21 @@ class ChromaVectorStore:
                 sorted(candidates, key=lambda chunk: chunk.chunk_index)
             )
         return page_chunks
+
+
+_SEARCH_STOP_WORDS = {
+    "a", "about", "an", "and", "are", "can", "do", "does", "for", "from",
+    "how", "i", "in", "is", "it", "me", "my", "of", "on", "or", "policy",
+    "tell", "that", "the", "this", "to", "what", "when", "where", "which",
+    "with",
+}
+
+
+def _search_terms(text: str) -> list[str]:
+    """Tokenize exact policy terms while removing low-value question words."""
+
+    return [
+        token
+        for token in re.findall(r"[a-z0-9]+(?:[-&][a-z0-9]+)*", text.casefold())
+        if token not in _SEARCH_STOP_WORDS and len(token) > 1
+    ]

@@ -1,0 +1,253 @@
+[
+  {
+    "id": "natural_europe_hotel",
+    "question": "What's the hotel limit in Europe?",
+    "evidence": {"reimbursement_2025.pdf": ["Europe", "EUR 220", "supersedes"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["220", "EUR|Europe", "exclud.*tax|before tax"],
+    "forbidden_patterns": ["(?:current|standard).{0,40}(?:EUR\\s*)?240"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "Answer the current EUR 220 per-night limit excluding taxes. Do not mix in the superseded EUR 240 amount or unrelated regional exceptions."
+  },
+  {
+    "id": "natural_asia_hotel",
+    "question": "How much can I spend on a hotel in Asia?",
+    "evidence": {"reimbursement_2025.pdf": ["Asia-Pacific", "USD 180", "USD 230", "pre-trip Finance approval"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["180", "per night", "230", "Finance"],
+    "forbidden_patterns": ["(?:standard|normal|current).{0,40}(?:USD\\s*)?230"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "Lead with USD 180 per night excluding taxes. Explain USD 230 only as a conditional named-city exception requiring pre-trip Finance approval; do not imply every Asian hotel qualifies."
+  },
+  {
+    "id": "natural_tokyo_followup",
+    "history": [
+      {"role": "user", "content": "How much can I spend on a hotel in Asia?"},
+      {"role": "assistant", "content": "The standard Asia-Pacific lodging cap is USD 180 per night."}
+    ],
+    "question": "What if it's Tokyo?",
+    "evidence": {"reimbursement_2025.pdf": ["Tokyo", "USD 230", "pre-trip Finance approval"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["Tokyo", "230", "pre-trip|before", "Finance"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "Resolve the follow-up to lodging. State that Tokyo may use the USD 230 exception only with pre-trip Finance approval; it is not an automatic entitlement."
+  },
+  {
+    "id": "natural_late_expense",
+    "question": "I'm late submitting my expenses. Can I still claim them?",
+    "evidence": {"reimbursement_2025.pdf": ["within 30 days", "after 60 days may be denied"], "workplace_policy.pdf": ["within 60 days of purchase"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["30", "60", "travel", "home office|equipment|purchase", "\\?"],
+    "forbidden_patterns": ["(?:will|definitely will) be paid", "automatically denied after 30"],
+    "citation_files": ["reimbursement_2025.pdf", "workplace_policy.pdf"],
+    "rubric": "The expense category is missing. Briefly distinguish current travel timing (30-day deadline; possible denial after 60) from the 60-day home-office-equipment deadline, then ask what kind of expense and how late. Do not introduce superseded deadlines."
+  },
+  {
+    "id": "natural_non_reimbursable",
+    "question": "What can't I expense?",
+    "evidence": {"reimbursement_2025.pdf": ["Personal travel upgrades", "Mini-bar charges", "Airline lounge memberships", "Expenses incurred by family members"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["upgrade", "mini-bar", "lounge", "family"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "Give all four explicitly non-reimbursable travel items. Do not imply that every unlisted expense is automatically reimbursable."
+  },
+  {
+    "id": "natural_receipt_followup",
+    "history": [
+      {"role": "user", "content": "I paid USD 25 for lunch while travelling."},
+      {"role": "assistant", "content": "The lunch cap is USD 25."}
+    ],
+    "question": "Do I need the receipt?",
+    "evidence": {"reimbursement_2025.pdf": ["receipts are required for all expenses above USD 25"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["25", "above|over", "not.*(?:solely|threshold|required)|does not.*require"],
+    "forbidden_patterns": ["receipt is required because.{0,30}(?:exactly )?(?:USD )?25"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "At exactly USD 25, the above-USD-25 rule alone does not require a receipt. Avoid saying that no other process could ever require one."
+  },
+  {
+    "id": "natural_remote_request",
+    "question": "Can I work remotely?",
+    "evidence": {"workplace_policy.pdf": ["minimum of 6 months", "manager approval", "periodic review"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["6|six", "manager", "approv", "periodic|review", "country", "provided|subject|eligible|eligibility"],
+    "forbidden_patterns": ["(?:^|[.!?]\\s*)Yes,? you can work remotely"],
+    "citation_files": ["workplace_policy.pdf"],
+    "rubric": "Explain eligibility after six months, manager approval, and periodic review. Do not turn eligibility into automatic permission."
+  },
+  {
+    "id": "natural_foreign_country",
+    "question": "Can I work from Spain for a while?",
+    "evidence": {"workplace_policy.pdf": ["country of employment", "temporary exception", "approved by HR"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["country of employment", "temporary", "HR"],
+    "citation_files": ["workplace_policy.pdf"],
+    "rubric": "Make the answer conditional on whether Spain is the employee's country of employment. A temporary exception requires HR approval; do not grant it based on manager approval alone."
+  },
+  {
+    "id": "natural_personal_laptop",
+    "question": "Can I use my own laptop for work?",
+    "evidence": {"workplace_policy.pdf": ["may not use personal computers", "explicitly approved by IT"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["not|may not|cannot", "IT", "approv"],
+    "forbidden_patterns": ["security software.{0,50}(?:is enough|allows|permitted)"],
+    "citation_files": ["workplace_policy.pdf"],
+    "rubric": "Use the current prohibition with its explicit IT-approved exception. Do not revive the historical temporary personal-laptop guidance."
+  },
+  {
+    "id": "natural_second_monitor",
+    "question": "Can I get a second monitor for home?",
+    "evidence": {"workplace_policy.pdf": ["External monitor(s): up to USD 400 total", "Every 3 Years", "Receipts are required"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["monitor", "400", "total", "3 years|three years", "receipt"],
+    "forbidden_patterns": ["400.{0,30}(?:each|per monitor)"],
+    "citation_files": ["workplace_policy.pdf"],
+    "rubric": "The policy supports monitor(s), but USD 400 is the combined total, with the three-year cycle and receipt condition. Do not promise reimbursement without those conditions."
+  },
+  {
+    "id": "natural_confidential_laptop",
+    "question": "Can I keep Confidential data on my laptop?",
+    "evidence": {"information_security_data.pdf": ["Confidential and Restricted data must be encrypted", "Restricted data may not be stored on local hard drives"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["does not.*(?:specify|authorize|approve|confirm|permit)|not.*specified", "encrypt", "Information Security"],
+    "forbidden_patterns": ["Confidential data (?:may|can) be (?:kept|stored) on (?:a |your )?(?:local |encrypted )?laptop"],
+    "citation_files": ["information_security_data.pdf"],
+    "rubric": "Encryption is required but is not local-storage permission. The current policy does not authorize Confidential laptop storage; refer the employee to Information Security without presenting the interim memo as current."
+  },
+  {
+    "id": "natural_dropbox",
+    "question": "Can I put company files in Dropbox?",
+    "evidence": {"information_security_data.pdf": ["Confidential and Restricted data must be encrypted", "personal cloud storage is prohibited"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["personal cloud", "prohibit", "Dropbox", "classification|Confidential|Restricted|approved|Information Security"],
+    "citation_files": ["information_security_data.pdf"],
+    "rubric": "Prohibit personal-cloud use, but do not assume every Dropbox account is personal or claim the policy names an approved company platform. Ask about the account and data classification or direct the user to Information Security."
+  },
+  {
+    "id": "natural_usb",
+    "question": "Can I use a USB stick?",
+    "evidence": {"data_guidelines.pdf": ["interim guidance", "USB drives are permitted if hardware-encrypted"], "information_security_data.pdf": ["Information Security & Data Classification Policy", "Handling Requirements"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["USB", "interim|historical", "does not.*(?:specify|authorize|approve|permit)|not.*current", "Information Security"],
+    "forbidden_patterns": ["(?:^|[.!?]\\s*)Yes,?.{0,30}USB", "USB (?:is|drives are) prohibited"],
+    "citation_files": ["data_guidelines.pdf", "information_security_data.pdf"],
+    "rubric": "Treat the old encrypted-USB permission as historical. The current policy is silent, which is neither permission nor prohibition; ask Information Security for an approved method."
+  },
+  {
+    "id": "natural_restricted_encryption_followup",
+    "history": [
+      {"role": "user", "content": "Can I save Restricted data on my local drive?"},
+      {"role": "assistant", "content": "Restricted data may not be stored on local hard drives."}
+    ],
+    "question": "What if I encrypt it?",
+    "evidence": {"information_security_data.pdf": ["must be encrypted at rest and in transit", "Restricted data may not be stored on local hard drives"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["No|not|cannot|may not", "encrypt", "Restricted", "local"],
+    "citation_files": ["information_security_data.pdf"],
+    "rubric": "Retain Restricted data and local-drive context. Encryption is also required but does not override the explicit local-hard-drive prohibition."
+  },
+  {
+    "id": "natural_gift_unknown_value",
+    "question": "Can I accept a gift from a supplier?",
+    "evidence": {"Code of Business Conduct.pdf": ["Gifts over USD 100 must be disclosed", "Gifts over USD 250 are prohibited", "conflict of interest"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["100", "250", "disclos", "prohibit", "value|worth|amount|how much|conflict"],
+    "forbidden_patterns": ["(?:^|[.!?]\\s*)Yes,?.{0,50}(?:accept|take|keep)"],
+    "citation_files": ["Code of Business Conduct.pdf"],
+    "rubric": "Do not give blanket permission without the value and conflict context. State the disclosure and prohibition thresholds and ask for the amount or explain that conflicts still matter."
+  },
+  {
+    "id": "natural_gift_250_followup",
+    "history": [
+      {"role": "user", "content": "Can I accept a gift from a supplier?"},
+      {"role": "assistant", "content": "The value and conflict context determine the answer."}
+    ],
+    "question": "It's worth $250. Is that okay?",
+    "evidence": {"Code of Business Conduct.pdf": ["Gifts over USD 100 must be disclosed", "Gifts over USD 250 are prohibited", "conflict of interest"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["250", "disclos", "not.*(?:automatically|itself)|conflict|over USD 250"],
+    "forbidden_patterns": ["(?:^|[.!?]\\s*)Yes,?.{0,60}(?:accept|take|keep)"],
+    "citation_files": ["Code of Business Conduct.pdf"],
+    "rubric": "Exactly USD 250 is not over the prohibition threshold, but it exceeds USD 100 and must be disclosed. Do not call it prohibited or automatically acceptable; conflict-of-interest rules still apply."
+  },
+  {
+    "id": "natural_disclosure_followup",
+    "history": [
+      {"role": "user", "content": "I received a gift worth USD 150."},
+      {"role": "assistant", "content": "It must be disclosed."}
+    ],
+    "question": "Where do I disclose it?",
+    "evidence": {"Code of Business Conduct.pdf": ["Gifts over USD 100 must be disclosed"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["disclos", "does not.*(?:specify|identify|name|provide)|not.*specified", "Compliance|Ethics"],
+    "forbidden_patterns": ["portal", "online form", "email address"],
+    "citation_files": ["Code of Business Conduct.pdf"],
+    "rubric": "State that disclosure is required but the documents do not give a channel. Refer to Compliance or Ethics without inventing a portal, form, or email address."
+  },
+  {
+    "id": "natural_vendor_paid_dinner",
+    "question": "The vendor paid for dinner. Can I submit it?",
+    "evidence": {"Code of Business Conduct.pdf": ["must still record and disclose it", "conflict of interest"], "vendor_procurement_policy.pdf": ["vendor-sponsored meals", "sponsorship acknowledgements"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["not.*(?:expense|reimburse|claim)|cannot.*(?:expense|reimburse|claim)|no.{0,50}(?:expense|claim)|incurred no", "record|disclos", "conflict"],
+    "forbidden_patterns": ["(?:can|may) claim", "(?:can|may) submit.*reimburse"],
+    "citation_files": ["Code of Business Conduct.pdf"],
+    "rubric": "A vendor-paid amount is not an employee expense to reimburse. Explain recording/disclosure and conflict checks separately; do not import gift thresholds or promise reimbursement."
+  },
+  {
+    "id": "natural_purchase_approval",
+    "question": "Who signs off on this purchase?",
+    "evidence": {"vendor_procurement_policy.pdf": ["< USD 25,000", "USD 25,000–100,000", "> USD 100,000", "Executive Committee"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["amount|value|spend|cost", "25,?000", "100,?000", "Manager", "Director", "Executive Committee"],
+    "citation_files": ["vendor_procurement_policy.pdf"],
+    "rubric": "The amount is missing, so do not select one approver. Give the three approval bands clearly and ask for the purchase value."
+  },
+  {
+    "id": "natural_unapproved_vendor",
+    "question": "Can I order from this supplier?",
+    "evidence": {"vendor_procurement_policy.pdf": ["approved vendors listed in the Procurement Portal", "written justification", "CFO approval"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["approved vendor|Procurement Portal", "exception|if.*not", "written justification", "CFO"],
+    "citation_files": ["vendor_procurement_policy.pdf"],
+    "rubric": "Ask or condition the answer on whether the supplier is approved. Non-approved vendors require the documented exception; do not give unconditional permission."
+  },
+  {
+    "id": "natural_travel_version",
+    "question": "Which travel policy should I use?",
+    "evidence": {"reimbursement_2025.pdf": ["Version: 3.2", "supersedes prior versions"], "travel_expenses_2022.pdf": ["Version: 2.6", "newer guidance may exist"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["2025|3\\.2", "supersed|current"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "Select version 3.2 effective in 2025 for current claims because it explicitly supersedes prior versions. The older version may be omitted or mentioned only as historical context."
+  },
+  {
+    "id": "natural_zurich",
+    "question": "Is Zurich treated as a high-cost city?",
+    "evidence": {"reimbursement_2025.pdf": ["Europe", "EUR 220", "Zurich", "Asia-Pacific cap"]},
+    "statuses": ["conflicting_sources"],
+    "answer_patterns": ["Zurich", "Europ|Switzerland", "220", "230", "ambig|unclear|inconsisten|clarif", "Finance"],
+    "forbidden_patterns": ["Zurich is (?:in|an?)(?: the)? Asia", "(?:is|definitely) eligible.{0,40}230"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "The policy names Zurich in a list attached to an Asia-Pacific exception, creating internal ambiguity. Use the European EUR 220 standard and ask Finance before applying USD 230; do not relocate Zurich or grant the exception."
+  },
+  {
+    "id": "natural_harassment",
+    "question": "What's our harassment policy?",
+    "evidence": {},
+    "statuses": ["insufficient_context"],
+    "answer_patterns": ["do not contain|does not contain|cannot find|no.*policy"],
+    "citation_files": [],
+    "rubric": "The uploaded documents contain no harassment policy. Do not turn speak-up or non-retaliation text into a harassment rule."
+  },
+  {
+    "id": "natural_contractor_remote",
+    "question": "Can contractors work remotely?",
+    "evidence": {"workplace_policy.pdf": ["regular full-time and part-time employees"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["contractor", "full-time|part-time", "do(?:es)? not|not.*(?:state|cover|establish|include)|cannot confirm"],
+    "forbidden_patterns": ["contractors (?:are|remain) eligible", "(?:^|[.!?]\\s*)Yes,?.{0,40}contractor"],
+    "citation_files": ["workplace_policy.pdf"],
+    "rubric": "The workplace policy scope names regular full- and part-time employees and does not establish contractor eligibility. Do not transfer contractor coverage from the travel policy."
+  }
+]

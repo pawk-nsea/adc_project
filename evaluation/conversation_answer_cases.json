@@ -1,0 +1,45 @@
+[
+  {
+    "id": "meal_question_then_independent_expense_question",
+    "turns": [
+      {
+        "question": "how much can I spent on dinner and drinks?",
+        "rubric": "Give USD 45 as a daily dinner cap, 15% tip cap and the documented-client-meal alcohol condition. Do not invent a separate drinks allowance or a blanket ban on non-alcoholic drinks. Include relevant disclosure only as needed, without a hypothetical client-paid-dinner summary."
+      },
+      {
+        "question": "ANd howm uch can I spent on lunch, dinner, and breakfast?",
+        "rubric": "Give breakfast USD 20, lunch USD 25, dinner USD 45 as separate daily caps. Do not require an unasked combined total or repeat hypothetical client-paid-dinner rules."
+      },
+      {
+        "question": "what are expenses that are non reimbursable?",
+        "rubric": "List personal travel upgrades, mini-bar charges, airline lounge memberships and expenses incurred by family members, citing the current travel policy. Do not answer the earlier meal-limit question again or demand its limits during verification."
+      }
+    ]
+  },
+  {
+    "id": "relative_clause_starts_a_new_topic",
+    "turns": [
+      {
+        "question": "How much can I claim for a hotel in North America?",
+        "rubric": "Current standard USD 250 per night excluding taxes, with the current travel source."
+      },
+      {
+        "question": "What is the policy for gifts that exceed USD 250?",
+        "rubric": "Gifts over USD 250 are prohibited. Do not repeat hotel limits or reinterpret the relative clause as a reference to the hotel question."
+      }
+    ]
+  },
+  {
+    "id": "real_reference_keeps_classification_and_location",
+    "turns": [
+      {
+        "question": "Can I store Restricted data on my local hard drive?",
+        "rubric": "No: the current security policy prohibits Restricted data on local hard drives."
+      },
+      {
+        "question": "What if I encrypt it?",
+        "rubric": "Keep the prior Restricted/local-drive facts. Encryption does not waive the prohibition; do not switch to the historical Confidential-data permission."
+      }
+    ]
+  }
+]

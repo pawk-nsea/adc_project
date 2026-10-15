@@ -1,6 +1,7 @@
-"""Application settings loaded from environment variables."""
+"""Load ADC_ environment settings and validate the prototype's local defaults."""
 
 from functools import lru_cache
+from typing import Literal
 
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -23,9 +24,15 @@ class Settings(BaseSettings):
     chunking_version: str = "v1"
     retrieval_top_k: int = Field(default=5, ge=1, le=20)
     gemini_api_key: SecretStr | None = None
-    chat_model: str = "gemini-3.5-flash-lite"
+    chat_model: str = "gemini-3.8-flash"
+    chat_thinking_level: Literal["MINIMAL", "LOW", "MEDIUM", "HIGH"] | None = "LOW"
+    verification_model: str = "gemini-3.8-flash"
     chat_temperature: float = Field(default=0.1, ge=0.0, le=2.0)
-    chat_max_output_tokens: int = Field(default=1000, gt=0)
+    # Ceilings allow broad questions; ordinary answers and audits stay concise.
+    chat_max_output_tokens: int = Field(default=4096, gt=0)
+    verification_max_output_tokens: int = Field(default=3072, gt=0)
+    # LOW retained correct controls; Flash 3.8 does not support MINIMAL.
+    verification_thinking_level: Literal["MINIMAL", "LOW", "MEDIUM", "HIGH"] = "LOW"
     chat_timeout_seconds: int = Field(default=60, gt=0)
 
     model_config = SettingsConfigDict(
@@ -36,6 +43,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_chunk_window(self) -> "Settings":
+        """Reject windows whose overlap or target cannot fit the maximum."""
+
         if not (
             self.chunk_overlap_tokens
             < self.chunk_target_tokens

@@ -1,3 +1,5 @@
+"""Check served browser assets and saved-workspace listing, restoration and deletion APIs."""
+
 import asyncio
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
@@ -42,6 +44,10 @@ def test_employee_web_app_and_assets_are_served(application: FastAPI) -> None:
     assert "text/css" in stylesheet.headers["content-type"]
     assert script.status_code == 200
     assert "javascript" in script.headers["content-type"]
+    assert "#page=${page}" in script.text
+    assert 'target = "_blank"' in script.text
+    assert "explainChatFailure" in script.text
+    assert "pendingQuestion.failed = true" in script.text
 
 
 def test_unknown_conversation_summary_returns_not_found(application: FastAPI) -> None:

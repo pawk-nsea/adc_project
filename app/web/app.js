@@ -1,3 +1,4 @@
+// Manage browser workspace state, API requests and rendering of chats and PDF citations.
 const elements = {
   chatError: document.querySelector("#chat-error"),
   chatForm: document.querySelector("#chat-form"),
@@ -58,6 +59,19 @@ function parseError(payload, fallback) {
   return fallback;
 }
 
+function explainChatFailure(status, detail) {
+  if (status === 504) {
+    return `${detail} Gemini timed out; no chat messages were saved.`;
+  }
+  if (status === 503) {
+    return `${detail} The service is temporarily unavailable; no chat messages were saved.`;
+  }
+  if (status === 502) {
+    return `${detail} The generated drafts did not pass the answer checks, so no doubtful answer was saved.`;
+  }
+  return `${detail} No chat messages were saved.`;
+}
+
 async function readJson(response) {
   try {
     return await response.json();
@@ -80,6 +94,7 @@ function safeActivityDate(value) {
 
 function renderConversationHistory() {
   elements.conversationList.replaceChildren();
+  elements.historyEmpty.textContent = "Your saved policy chats will appear here.";
   elements.historyEmpty.hidden = state.conversations.length > 0;
 
   state.conversations.forEach((conversation) => {
@@ -122,6 +137,10 @@ async function refreshConversationHistory() {
     state.conversations = payload.conversations;
     renderConversationHistory();
   } catch {
+    if (!state.conversations.length) {
+      elements.historyEmpty.textContent = "Saved chats could not be loaded. Start a new workspace or refresh to retry.";
+      elements.historyEmpty.hidden = false;
+    }
     announce("Saved chats could not be refreshed.");
   }
 }
@@ -129,6 +148,7 @@ async function refreshConversationHistory() {
 function setControls() {
   const hasDocuments = state.documents.length > 0;
   const canSend = hasDocuments && !state.busy && elements.messageInput.value.trim().length > 0;
+  elements.newWorkspaceButton.disabled = state.busy || state.uploading;
   elements.messageInput.disabled = !hasDocuments || state.busy;
   elements.sendButton.disabled = !canSend;
   elements.messageInput.placeholder = hasDocuments
@@ -141,6 +161,22 @@ function setControls() {
   elements.suggestions.querySelectorAll("button").forEach((button) => {
     button.disabled = !hasDocuments || state.busy;
   });
+}
+
+function sourceForCitation(citation) {
+  // Legacy citations lack IDs; use the filename only when it identifies one source.
+  if (citation.document_id) {
+    return state.documents.find((source) => source.document_id === citation.document_id);
+  }
+  const filenameMatches = state.documents.filter((source) => source.filename === citation.filename);
+  return filenameMatches.length === 1 ? filenameMatches[0] : undefined;
+}
+
+function sourceUrl(documentId, page = 1) {
+  // The browser's PDF viewer handles #page; the server checks workspace membership.
+  const documentPath = encodeURIComponent(documentId);
+  const conversation = encodeURIComponent(state.conversationId);
+  return `/documents/${documentPath}/content?conversation_id=${conversation}#page=${page}`;
 }
 
 function renderSources() {
@@ -174,15 +210,40 @@ function renderSources() {
     check.className = "source-check";
     check.textContent = "✓";
     check.setAttribute("aria-label", "Indexed");
-    item.append(icon, copy, check);
+    if (source.source_view_available) {
+      const openLink = document.createElement("a");
+      openLink.className = "source-open";
+      openLink.href = sourceUrl(source.document_id);
+      openLink.target = "_blank";
+      openLink.rel = "noopener";
+      openLink.title = `Open ${source.filename}`;
+      openLink.append(icon, copy);
+      item.append(openLink, check);
+    } else {
+      item.classList.add("source-view-unavailable");
+      item.title = "This older upload must be uploaded again in a new chat before it can be opened.";
+      item.append(icon, copy, check);
+    }
     elements.sourceList.append(item);
   });
   setControls();
 }
 
 function createCitation(citation) {
-  const item = document.createElement("span");
+  const source = sourceForCitation(citation);
+  const canOpen = Boolean(source?.source_view_available);
+  const item = document.createElement(canOpen ? "a" : "span");
   item.className = "citation";
+  if (canOpen) {
+    item.href = sourceUrl(source.document_id, citation.page);
+    item.target = "_blank";
+    item.rel = "noopener";
+    item.title = `Open ${citation.filename} at page ${citation.page}`;
+    item.setAttribute("aria-label", `Open source ${citation.id}: ${citation.filename}, page ${citation.page}`);
+  } else {
+    item.classList.add("citation-unavailable");
+    item.title = "Source preview is unavailable for this older upload. Upload it again in a new chat.";
+  }
   const number = document.createElement("span");
   number.className = "citation-number";
   number.textContent = String(citation.id);
@@ -224,6 +285,7 @@ function createMessage(message, options = {}) {
 
   const text = document.createElement("div");
   text.className = "message-text";
+  // Display model prose as plain text so generated markup cannot become active HTML.
   text.textContent = message.content;
   content.append(label, text);
 
@@ -303,6 +365,7 @@ async function uploadFiles(fileList) {
   if (!files.length || state.uploading) return;
   state.uploading = true;
   elements.fileInput.disabled = true;
+  setControls();
 
   for (const file of files) {
     const view = makeUploadStatus(file);
@@ -345,6 +408,15 @@ async function sendQuestion(question) {
   const cleanQuestion = question.trim();
   clearChatError();
   state.busy = true;
+  const failedQuestion = state.messages.at(-1);
+  // Failed questions exist only in browser state; retry without duplicating that row.
+  if (
+    failedQuestion?.role === "user"
+    && failedQuestion.failed
+    && failedQuestion.content === cleanQuestion
+  ) {
+    state.messages.pop();
+  }
   state.messages.push({ role: "user", content: cleanQuestion, citations: [] });
   renderMessages();
   showThinking();
@@ -361,7 +433,8 @@ async function sendQuestion(question) {
     });
     const payload = await readJson(response);
     if (!response.ok) {
-      throw new Error(parseError(payload, `The assistant could not answer (${response.status}).`));
+      const detail = parseError(payload, `The assistant could not answer (${response.status}).`);
+      throw new Error(explainChatFailure(response.status, detail));
     }
     state.messages.push({
       role: "assistant",
@@ -375,7 +448,10 @@ async function sendQuestion(question) {
     announce("Answer ready.");
   } catch (error) {
     hideThinking();
-    state.messages.pop();
+    const pendingQuestion = state.messages.at(-1);
+    if (pendingQuestion?.role === "user" && pendingQuestion.content === cleanQuestion) {
+      pendingQuestion.failed = true;
+    }
     renderMessages();
     elements.messageInput.value = cleanQuestion;
     showChatError(error instanceof Error ? error.message : "The assistant could not answer.");
@@ -395,6 +471,7 @@ async function initializeWorkspace() {
 }
 
 async function openConversation(conversationId) {
+  // Prevent switching during an upload or chat response tied to the current workspace.
   if (state.busy || state.uploading || conversationId === state.conversationId) return;
   clearChatError();
   try {
@@ -444,20 +521,21 @@ async function deleteConversation(conversationId, title) {
   }
 }
 
-function startNewWorkspace() {
+async function startNewWorkspace() {
+  if (state.busy || state.uploading) return;
   const hasContent = state.documents.length > 0 || state.messages.length > 0;
   if (hasContent && !window.confirm("Start a new workspace? Your current conversation stays saved under its workspace ID.")) {
     return;
   }
   state.documents = [];
   state.messages = [];
-  state.busy = false;
   clearChatError();
   setConversationId(crypto.randomUUID());
   renderSources();
   renderMessages();
   renderConversationHistory();
   elements.messageInput.value = "";
+  await refreshConversationHistory();
   announce("New empty workspace created.");
 }
 

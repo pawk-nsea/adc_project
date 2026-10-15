@@ -1,3 +1,5 @@
+"""Check deterministic chunk IDs, page boundaries and token windows using a fake counter."""
+
 from app.services.chunker import create_chunks
 from app.services.pdf_parser import ParsedPage
 from tests.conftest import FakeEmbeddingProvider

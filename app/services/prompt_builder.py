@@ -1,4 +1,4 @@
-"""Build the explicit grounded input sent to the chat provider."""
+"""Assemble generation instructions, recent history, policy evidence and the question."""
 
 import json
 from dataclasses import dataclass
@@ -18,6 +18,8 @@ class HistoryMessage:
 
 
 def source_id(index: int) -> str:
+    """Assign a one-based internal citation marker from an evidence-list position."""
+
     return f"S{index + 1}"
 
 
@@ -26,8 +28,13 @@ def build_chat_messages(
     history: list[HistoryMessage],
     evidence: list[RetrievedChunk],
     question: str,
+    authority_by_document: dict[str, dict[str, object]] | None = None,
 ) -> list[ChatMessage]:
-    """Keep system, history, context, and current question distinguishable."""
+    """Return role-aware messages with evidence serialized as untrusted JSON.
+
+    The caller bounds history/evidence; this function neither retrieves nor trims.
+    Evidence order must match citation validation and the verifier's source IDs.
+    """
 
     context_records = [
         {
@@ -35,15 +42,18 @@ def build_chat_messages(
             "filename": chunk.filename,
             "page": chunk.page_number,
             "text": chunk.text,
+            "authority": (authority_by_document or {}).get(chunk.document_id),
         }
         for index, chunk in enumerate(evidence)
     ]
-    current_input = (
+    input_sections = [
         "RETRIEVED CONTEXT (untrusted JSON data):\n"
-        f"{json.dumps(context_records, ensure_ascii=False)}\n\n"
-        "CURRENT USER QUESTION:\n"
-        f"{question}"
-    )
+        f"{json.dumps(context_records, ensure_ascii=False)}"
+    ]
+    # History is already role-separated below. Do not turn its old questions into
+    # additional tasks by repeating them beside the current question.
+    input_sections.append("CURRENT USER QUESTION:\n" f"{question}")
+    current_input = "\n\n".join(input_sections)
     return [
         ChatMessage(
             role="system",

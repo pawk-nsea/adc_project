@@ -1,0 +1,180 @@
+[
+  {
+    "id": "independent_topic_bad",
+    "expected_verdict": "revise",
+    "question": "What are fees that cannot be refunded?",
+    "sources": [
+      {
+        "filename": "studio_refunds.pdf",
+        "text": "Studio membership fees are not refundable. Workshop materials may be returned within seven days."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Workshop materials may be returned within seven days [S1]. Studio membership fees are not refundable [S1]."
+    },
+    "history": [
+      {
+        "role": "user",
+        "content": "How long do I have to return workshop materials?"
+      },
+      {
+        "role": "assistant",
+        "content": "Workshop materials may be returned within seven days [1]."
+      }
+    ]
+  },
+  {
+    "id": "independent_topic_good",
+    "expected_verdict": "pass",
+    "question": "What are fees that cannot be refunded?",
+    "sources": [
+      {
+        "filename": "studio_refunds.pdf",
+        "text": "Studio membership fees are not refundable. Workshop materials may be returned within seven days."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Studio membership fees are not refundable [S1]."
+    },
+    "history": [
+      {
+        "role": "user",
+        "content": "How long do I have to return workshop materials?"
+      },
+      {
+        "role": "assistant",
+        "content": "Workshop materials may be returned within seven days [1]."
+      }
+    ]
+  },
+  {
+    "id": "coverage_fact_bad",
+    "expected_verdict": "revise",
+    "question": "Can visiting artists use a locker?",
+    "sources": [
+      {
+        "filename": "locker_policy.pdf",
+        "text": "This locker policy covers permanent studio members only. It does not address visiting artists."
+      }
+    ],
+    "candidate_answer": {
+      "status": "insufficient_context",
+      "answer": "The locker policy covers permanent studio members only, so it does not establish whether visiting artists can use a locker."
+    }
+  },
+  {
+    "id": "coverage_fact_good",
+    "expected_verdict": "pass",
+    "question": "Can visiting artists use a locker?",
+    "sources": [
+      {
+        "filename": "locker_policy.pdf",
+        "text": "This locker policy covers permanent studio members only. It does not address visiting artists."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "The locker policy covers permanent studio members only [S1]. It does not establish whether visiting artists can use a locker."
+    }
+  },
+  {
+    "id": "controlling_citation_bad",
+    "expected_verdict": "revise",
+    "question": "Can I claim back a tool paid for entirely by the studio?",
+    "sources": [
+      {
+        "filename": "reimbursement.pdf",
+        "text": "Reimbursement covers expenses personally incurred by members."
+      },
+      {
+        "filename": "tool_register.pdf",
+        "text": "Studio-funded tools should be recorded in the equipment register."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "No. A tool paid for entirely by the studio is not a personally incurred expense [S2]."
+    }
+  },
+  {
+    "id": "controlling_citation_good",
+    "expected_verdict": "pass",
+    "question": "Can I claim back a tool paid for entirely by the studio?",
+    "sources": [
+      {
+        "filename": "reimbursement.pdf",
+        "text": "Reimbursement covers expenses personally incurred by members."
+      },
+      {
+        "filename": "tool_register.pdf",
+        "text": "Studio-funded tools should be recorded in the equipment register."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "No. A tool paid for entirely by the studio is not a personally incurred expense [S1]."
+    }
+  },
+  {
+    "id": "missing_category_bad",
+    "expected_verdict": "revise",
+    "question": "I am late claiming a cost. Can I still submit it?",
+    "sources": [
+      {
+        "filename": "studio_manual.pdf",
+        "text": "Studio travel claims must be submitted within 14 days of a visit. Art material claims must be submitted within 40 days of purchase. The manual specifies no late-claim outcome."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Claims must be submitted within 14 days of a visit [S1]."
+    }
+  },
+  {
+    "id": "missing_category_good",
+    "expected_verdict": "pass",
+    "question": "I am late claiming a cost. Can I still submit it?",
+    "sources": [
+      {
+        "filename": "studio_manual.pdf",
+        "text": "Studio travel claims must be submitted within 14 days of a visit. Art material claims must be submitted within 40 days of purchase. The manual specifies no late-claim outcome."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "It depends on the cost category and timing: travel claims are due within 14 days of a visit, while art material claims are due within 40 days of purchase [S1]. The manual gives no late-claim outcome. What kind of cost is it and how late is the claim?"
+    }
+  },
+  {
+    "id": "provided_quantity_bad",
+    "expected_verdict": "revise",
+    "question": "What is the total lodging allowance for my eight-day residency, including taxes?",
+    "sources": [
+      {
+        "filename": "studio_manual.pdf",
+        "text": "Residency lodging is capped at 70 units per night, excluding taxes."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "The total cannot be established because you did not specify the duration. The lodging cap is 70 units per night excluding taxes [S1]."
+    }
+  },
+  {
+    "id": "provided_quantity_good",
+    "expected_verdict": "pass",
+    "question": "What is the total lodging allowance for my eight-day residency, including taxes?",
+    "sources": [
+      {
+        "filename": "studio_manual.pdf",
+        "text": "Residency lodging is capped at 70 units per night, excluding taxes."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "The lodging cap is 70 units per night excluding taxes [S1]. You specified eight days, but the overnight count and taxes are missing, so the total cannot be established."
+    }
+  }
+]

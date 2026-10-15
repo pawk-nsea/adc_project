@@ -1,3 +1,4 @@
+# Exclude credentials, runtime/build artifacts and local experiment archives from Git.
 .env
 .venv/
 .agents/
@@ -31,3 +32,27 @@ project description/
 *.log
 .idea/
 .vscode/
+
+# Local environment variants and interrupted setup files; keep the safe example.
+.env.*
+!.env.example
+*.tmp
+*.tmp.*
+
+# Storage files outside the default runtime directory.
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Historical development material is preserved locally, outside the submission.
+docs/archive/
+docs/APEX_LIVE_VALIDATION/
+docs/APEX_LIVE_VALIDATION.zip
+
+# Keep reusable question fixtures; exclude generated reports and experiments.
+evaluation/*
+!evaluation/*_cases.json
+!evaluation/retired_case_ids.json

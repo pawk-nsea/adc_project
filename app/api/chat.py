@@ -1,6 +1,6 @@
 """Grounded policy chat endpoint."""
 
-from fastapi import APIRouter, HTTPException, Request, status
+from fastapi import APIRouter, HTTPException, Request
 
 from app.schemas import ChatRequest, ChatResponse
 from app.providers.llm import (
@@ -8,6 +8,7 @@ from app.providers.llm import (
     ChatProviderError,
     ChatProviderRateLimitError,
     ChatProviderTimeoutError,
+    ChatProviderUnavailableError,
     InvalidModelResponseError,
 )
 from app.services.chat import ChatPersistenceError, UnknownConversationError
@@ -31,7 +32,7 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ChatConfigurationError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
-    except ChatProviderRateLimitError as exc:
+    except (ChatProviderRateLimitError, ChatProviderUnavailableError) as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except ChatProviderTimeoutError as exc:
         raise HTTPException(status_code=504, detail=str(exc)) from exc

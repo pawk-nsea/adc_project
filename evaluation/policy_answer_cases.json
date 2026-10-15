@@ -1,7 +1,7 @@
 [
   {
     "id": "zurich_exception",
-    "question": "How much can I spend per night on lodging in Zurich? Does the USD 230 exception apply?",
+    "question": "How much can I spend per night on lodging in Zurich?",
     "evidence": {"reimbursement_2025.pdf": ["EUR 220", "Asia-Pacific cap", "supersedes"]},
     "statuses": ["conflicting_sources"],
     "answer_patterns": ["Europ|Switzerland", "220", "230", "Financ", "ambig|unclear|inconsisten|clarif|conflict"],
@@ -70,12 +70,23 @@
   },
   {
     "id": "gift_equal_250",
-    "question": "Is a gift worth exactly USD 250 automatically prohibited, and does it need disclosure?",
+    "question": "Can I accept a gift worth exactly USD 250?",
     "evidence": {"Code of Business Conduct.pdf": ["over USD 100", "over USD 250"]},
     "statuses": ["answered"],
-    "answer_patterns": ["disclos", "100", "over|above|exceed|more than", "250"],
+    "answer_patterns": ["(?:must|need(?:s)? to|required to).{0,40}disclos|disclos.{0,40}(?:is|remains) required", "100", "not.{0,30}prohibit|does not exceed|doesn't exceed|does not fall|doesn't fall|only.{0,80}over.{0,40}prohibit|over.{0,80}exclude", "250", "not automatically|conflict.*interest|other ethics|subject to"],
+    "forbidden_patterns": ["(?:may|can) be accepted if disclosed", "up to (?:USD )?250 may be accepted", "(?:^|[.!?]\\s*)Yes.{0,60}(?:accept|keep|take|receive)", "(?:may|can) accept"],
     "citation_files": ["Code of Business Conduct.pdf"],
-    "rubric": "Exactly 250 is not prohibited by the over-250 threshold; it must be disclosed. Other ethics conditions still apply."
+    "rubric": "Exactly 250 is not prohibited by the over-250 threshold; it must be disclosed. Other ethics conditions still apply. Passing the threshold is not automatic permission to accept it."
+  },
+  {
+    "id": "gift_disclosure_procedure_gap",
+    "question": "How can I disclose a gift?",
+    "evidence": {"Code of Business Conduct.pdf": ["Gifts over USD 100 must be disclosed"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["must be disclosed|requires.*disclos", "(?:does|do) not.*(?:specify|describe|provide|identify|name).*(?:process|procedure|method|channel|form)|(?:process|procedure|method|channel|form).*not.*specified", "Compliance|Ethics"],
+    "forbidden_patterns": ["portal|online form|email address"],
+    "citation_files": ["Code of Business Conduct.pdf"],
+    "rubric": "State the supported disclosure obligation, identify that the documents omit the method, and provide a safe owner to contact. Do not invent a workflow or return a bare not-found answer."
   },
   {
     "id": "procurement_equal_100000",
@@ -91,7 +102,7 @@
     "question": "Will my current travel expense claim definitely be paid if I submit it 45 days after returning?",
     "evidence": {"reimbursement_2025.pdf": ["30 days", "60 days", "supersedes"]},
     "statuses": ["answered"],
-    "answer_patterns": ["30", "60", "guarante|not.*assur|cannot.*confirm|does not.*confirm"],
+    "answer_patterns": ["30", "60", "guarante|not definitely|not.*assur|cannot.*confirm|does not.*confirm"],
     "citation_files": ["reimbursement_2025.pdf"],
     "rubric": "45 days misses the 30-day deadline; the after-60 denial clause is not a promise to pay days 31–60."
   },
@@ -115,13 +126,14 @@
     "rubric": "Combine compatible requirements, distinguish a sponsor paying from employee reimbursement, and do not invent a high-value threshold."
   },
   {
-    "id": "all_policy_conflicts",
-    "question": "Review conflicts and inconsistencies across all uploaded policies, including travel, workplace, and data handling.",
-    "evidence": {"reimbursement_2025.pdf": ["supersedes", "Zurich", "EUR 220"], "travel_expenses_2022.pdf": ["90 days"], "workplace_policy.pdf": ["replaces", "USD 50"], "home_office_guidelines.pdf": ["No monthly"], "data_guidelines.pdf": ["Confidential"], "information_security_data.pdf": ["Restricted"]},
-    "statuses": ["conflicting_sources"],
-    "answer_patterns": ["Zurich", "replac|supersed", "resolved|historical|not.*active.*conflict", "Confidential", "Restricted", "compatible|different.*classif|distinct.*classif|not.*conflict|not.*contradict", "USB", "USB.{0,500}(unresolved|unclear|silent|clarif|does not.*(?:confirm|revoke|address)|not explicitly.*(?:confirm|revoke|address))|(unresolved|unclear|silent|clarif|does not.*(?:confirm|revoke|address)|not explicitly.*(?:confirm|revoke|address)).{0,500}USB"],
-    "citation_files": ["reimbursement_2025.pdf", "workplace_policy.pdf", "data_guidelines.pdf", "information_security_data.pdf"],
-    "rubric": "Separate resolved historical travel/workplace differences, unresolved Zurich ambiguity, and distinct data-classification scopes; avoid claiming exhaustive assurance."
+    "id": "vendor_paid_dinner_claim",
+    "question": "Can I get reimbursed for a vendor-paid dinner?",
+    "evidence": {"reimbursement_2025.pdf": ["expenses incurred", "supersedes"], "vendor_procurement_policy.pdf": ["accepting vendor-sponsored meals", "sponsorship acknowledgements should be recorded"], "Code of Business Conduct.pdf": ["client pays for a dinner", "record and disclose"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["^(?:No|You (?:cannot|can't|should not))", "vendor.{0,100}(?:no|not|cannot|can't).{0,80}(?:claim|expense|reimburs)|(?:no|not|cannot|can't).{0,80}(?:claim|expense|reimburs).{0,100}vendor", "accept|disclos|record"],
+    "forbidden_patterns": ["claim or accept", "(?:can|may) claim", "alcohol"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "Answer the reimbursement question first: when the vendor paid, the employee has no expense to reimburse. Cite the employee-incurred-expense definition in current T&E page 1 for that conclusion. Distinguish separate acceptance/disclosure rules if discussed; omit unrelated alcohol guidance."
   },
   {
     "id": "unsupported_parental_leave",
@@ -166,7 +178,7 @@
     "question": "Under the current travel policy, is an itemized receipt required solely because an expense is exactly USD 25?",
     "evidence": {"reimbursement_2025.pdf": ["above USD 25", "supersedes"]},
     "statuses": ["answered"],
-    "answer_patterns": ["exactly|equal", "not|required.*above|above.*25"],
+    "answer_patterns": ["exactly|equal|^No,?.*above", "not|required.*above|above.*25"],
     "forbidden_patterns": ["exactly USD 25.{0,30}(?:is required|does require|requires)"],
     "citation_files": ["reimbursement_2025.pdf"],
     "rubric": "Preserve the strict 'above USD 25' boundary. Exactly USD 25 does not trigger this particular receipt rule, without claiming that no other documentation rule could apply."
@@ -254,13 +266,13 @@
     "rubric": "Encryption does not create a personal-cloud exception; access review is quarterly."
   },
   {
-    "id": "usb_current_authority_unclear",
+    "id": "usb_current_policy_gap",
     "question": "Is hardware-encrypted USB storage definitely approved under the current comprehensive security policy?",
     "evidence": {"data_guidelines.pdf": ["interim guidance", "USB drives are permitted if hardware-encrypted"], "information_security_data.pdf": ["Information Security & Data Classification Policy", "Handling Requirements"]},
-    "statuses": ["conflicting_sources"],
-    "answer_patterns": ["interim", "USB", "not|does not|unclear|clarif", "Information Security"],
+    "statuses": ["answered"],
+    "answer_patterns": ["interim|historical", "USB", "does not.*(?:specify|authorize|approve|address|permit)|not.*current", "Information Security"],
     "citation_files": ["data_guidelines.pdf", "information_security_data.pdf"],
-    "rubric": "The old memo permits encrypted USB, but the comprehensive policy does not expressly confirm or revoke it. Do not invent current approval; request Information Security clarification."
+    "rubric": "The interim memo was pending the comprehensive policy and is historical. The current policy does not specify or authorize USB. Do not invent approval or prohibition; request Information Security guidance."
   },
   {
     "id": "procurement_just_below_25000",
@@ -299,12 +311,106 @@
     "rubric": "Do not transfer scope between unrelated policy families. The workplace excerpt does not establish contractor eligibility."
   },
   {
+    "id": "current_data_storage_overview",
+    "question": "What is the current policy on data storage?",
+    "evidence": {"information_security_data.pdf": ["Confidential and Restricted data must be encrypted", "Restricted data may not be stored on local hard drives", "personal cloud storage is prohibited"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["Confidential", "Restricted", "encrypt", "local hard drive", "personal cloud"],
+    "forbidden_patterns": ["\\bUSB\\b", "2019", "interim guidance"],
+    "citation_files": ["information_security_data.pdf"],
+    "rubric": "Summarize the governing comprehensive policy by practical rule. Do not introduce historical laptop or USB permissions into an ordinary current-policy overview."
+  },
+  {
+    "id": "confidential_local_storage_gap",
+    "question": "Where can I store my Confidential data?",
+    "evidence": {"information_security_data.pdf": ["Confidential and Restricted data must be encrypted", "Use of personal cloud storage is prohibited"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["encrypt", "personal cloud", "not.*(?:specif|identif|name|approv)|does not.*(?:specif|identif|name|approv)|unspecified"],
+    "forbidden_patterns": ["(?:^|[.!?]\\s*)Confidential data (?:may|can) be stored (?:locally|on local|on an encrypted laptop)"],
+    "citation_files": ["information_security_data.pdf"],
+    "rubric": "Answer where: current policy requires encryption at rest and in transit and prohibits personal cloud, but does not name approved storage locations or a company platform. State that gap instead of approving historical laptop/USB locations, or transferring the Restricted local-drive ban to Confidential data. Information Security can clarify approved locations."
+  },
+  {
+    "id": "company_cloud_not_specified",
+    "question": "Does the current security policy approve a company cloud platform for storing Confidential data?",
+    "evidence": {"information_security_data.pdf": ["Confidential and Restricted data must be encrypted", "Use of personal cloud storage is prohibited"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["personal cloud", "prohibit", "does not.*(?:identify|name|specify|approve)|do not.*(?:identify|name|specify|approve)|not.*specified"],
+    "forbidden_patterns": ["(?:^|[.!?]\\s*)(?:the )?company cloud (?:is|platform is) approved", "(?:^|[.!?]\\s*)(?:the )?corporate cloud (?:is|platform is) approved"],
+    "citation_files": ["information_security_data.pdf"],
+    "rubric": "Distinguish the explicit personal-cloud prohibition from the absence of a named approved company platform. Do not invent a product or approval."
+  },
+  {
+    "id": "internal_data_handling_gap",
+    "question": "Does the current policy require Internal data to be encrypted at rest and in transit?",
+    "evidence": {"information_security_data.pdf": ["Internal", "Confidential and Restricted data must be encrypted at rest and in transit"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["Internal", "Confidential", "Restricted", "does not.*(?:state|specify|say|require)|not.*specified"],
+    "forbidden_patterns": ["^No,?\\s+(?:the )?current policy does not require Internal"],
+    "citation_files": ["information_security_data.pdf"],
+    "rubric": "The policy lists Internal as a classification but the retrieved handling requirement names only Confidential and Restricted. Do not transfer that requirement or infer that Internal never needs encryption."
+  },
+  {
+    "id": "harassment_policy_missing",
+    "question": "What is Apex Global's policy on harassment of co-workers?",
+    "evidence": {},
+    "statuses": ["insufficient_context"],
+    "answer_patterns": ["do not contain|does not contain|cannot find|no.*policy"],
+    "citation_files": [],
+    "rubric": "The supplied corpus contains speak-up and non-retaliation language but no harassment rule. Do not manufacture a harassment policy or use speak-up text as a substitute."
+  },
+  {
     "id": "no_single_trip_total",
     "question": "What is the single total amount I can spend on a five-day Asia-Pacific trip, including hotel, meals, taxes, and tips?",
     "evidence": {"reimbursement_2025.pdf": ["Per Night, Excluding Taxes", "Meals & Incidentals", "Tips capped at 15%"]},
     "statuses": ["answered"],
-    "answer_patterns": ["no single|cannot calculate|not enough|depends", "per night|night", "tax", "meal"],
+    "answer_patterns": ["no single|do not specify a single|cannot calculate|not enough|depends", "per night|night", "tax", "meal"],
     "citation_files": ["reimbursement_2025.pdf"],
     "rubric": "Do not add unlike caps or invent taxes/exchange rates. Explain that separate per-night and meal limits plus missing trip details prevent one authoritative total."
+  },
+  {
+    "id": "north_america_lodging_tax_condition",
+    "question": "What is the current nightly hotel limit for North America, and does it include taxes?",
+    "evidence": {"reimbursement_2025.pdf": ["North America USD 250", "Per Night, Excluding Taxes", "supersedes"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["250", "exclud.*tax|tax.*exclud"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "Current standard limit is USD 250 per night excluding taxes. Do not substitute historical USD 275 or invent a tax allowance."
+  },
+  {
+    "id": "tip_above_percentage_cap",
+    "question": "Can I expense a 20% tip on an otherwise reimbursable client meal?",
+    "evidence": {"reimbursement_2025.pdf": ["Tips capped at 15%"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["15", "No|cannot|can't|exceed|above|limit"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "No reimbursement of the full 20% tip under a 15% cap. Preserve the tip limit without claiming the otherwise eligible meal itself is entirely non-reimbursable."
+  },
+  {
+    "id": "foreign_work_manager_approval_insufficient",
+    "question": "My manager approved working from another country. Is that enough under the current workplace policy?",
+    "evidence": {"workplace_policy.pdf": ["country of employment", "approved by HR", "replaces"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["HR", "country of employment", "No|not enough|not sufficient|requires|must"],
+    "citation_files": ["workplace_policy.pdf"],
+    "rubric": "Manager approval alone does not replace current HR approval for a temporary country-of-employment exception. Do not import the historical worldwide manager-only allowance or forbid every exception."
+  },
+  {
+    "id": "procurement_exception_manager_insufficient",
+    "question": "Can a manager approve an exception to the vendor procurement policy if I provide written justification?",
+    "evidence": {"vendor_procurement_policy.pdf": ["Exceptions require written justification and CFO approval"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["CFO", "written justification", "No|cannot|can't|requires|must"],
+    "citation_files": ["vendor_procurement_policy.pdf"],
+    "rubric": "Written justification plus CFO approval is required for an exception; ordinary manager purchase approval is insufficient. Do not infer authority from spend thresholds."
+  },
+  {
+    "id": "confidential_named_platform_and_protection",
+    "question": "Does the policy name an approved company cloud service for Confidential data, and what protection does it require for that data?",
+    "evidence": {"information_security_data.pdf": ["Confidential and Restricted data must be encrypted at rest and in transit", "Use of personal cloud storage is prohibited"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["encrypt", "at rest", "in transit", "not.*(?:name|specif|identif)|does not.*(?:name|specif|identif)|unspecified"],
+    "citation_files": ["information_security_data.pdf"],
+    "rubric": "Separate the missing approved-company-platform name from the supported encryption-at-rest/in-transit obligation and personal-cloud prohibition. Do not invent a service or blanket storage approval."
   }
 ]

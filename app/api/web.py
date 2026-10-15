@@ -1,4 +1,4 @@
-"""Employee-facing web page served by the same FastAPI process."""
+"""Serve the browser page and static assets from the same FastAPI process."""
 
 from pathlib import Path
 
@@ -7,6 +7,7 @@ from fastapi.responses import HTMLResponse, Response
 
 
 WEB_DIRECTORY = Path(__file__).parent.parent / "web"
+# Assets are read at import time; reload the module to pick up edits.
 INDEX_HTML = (WEB_DIRECTORY / "index.html").read_text(encoding="utf-8")
 STYLES_CSS = (WEB_DIRECTORY / "styles.css").read_text(encoding="utf-8")
 APP_JAVASCRIPT = (WEB_DIRECTORY / "app.js").read_text(encoding="utf-8")

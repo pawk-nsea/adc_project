@@ -1,9 +1,9 @@
-"""Relational database setup and lifecycle."""
+"""Create relational storage, apply additive SQLite updates and manage sessions."""
 
 from collections.abc import Iterator
 from pathlib import Path
 
-from sqlalchemy import Engine, create_engine
+from sqlalchemy import Engine, create_engine, inspect, text
 from sqlalchemy.engine import make_url
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
@@ -46,12 +46,27 @@ class Database:
         Path(database_path).expanduser().parent.mkdir(parents=True, exist_ok=True)
 
     def create_tables(self) -> None:
-        """Create the Stage 1 schema if it does not exist."""
+        """Create missing tables and add retained-PDF columns to older SQLite files."""
 
         # Importing registers the model metadata before create_all runs.
         from app import models  # noqa: F401
 
         Base.metadata.create_all(self.engine)
+        self._add_document_columns_for_existing_sqlite_database()
+
+    def _add_document_columns_for_existing_sqlite_database(self) -> None:
+        """Apply additive prototype migrations needed by existing workspaces."""
+
+        if make_url(self.database_url).get_backend_name() != "sqlite":
+            return
+        columns = {column["name"] for column in inspect(self.engine).get_columns("documents")}
+        with self.engine.begin() as connection:
+            if "content_bytes" not in columns:
+                connection.execute(text("ALTER TABLE documents ADD COLUMN content_bytes BLOB"))
+            if "authority_metadata_json" not in columns:
+                connection.execute(
+                    text("ALTER TABLE documents ADD COLUMN authority_metadata_json JSON")
+                )
 
     def sessions(self) -> Iterator[Session]:
         """Yield a session and always close it after request handling."""

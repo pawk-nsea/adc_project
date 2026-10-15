@@ -66,4 +66,5 @@ async def upload_document(
         status=result.status,
         chunks_indexed=result.chunk_count,
         uploaded_at=result.uploaded_at,
+        source_view_available=True,
     )

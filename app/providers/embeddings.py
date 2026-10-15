@@ -1,11 +1,11 @@
-"""Embedding-provider boundary and local MiniLM implementation."""
+"""Provide local MiniLM vectors and tokenizer counts for ingestion and retrieval."""
 
 from pathlib import Path
 from typing import Protocol
 
 
 class EmbeddingProvider(Protocol):
-    """Small interface used by ingestion and, later, retrieval."""
+    """Shared document/query vector space and token counter used for chunk sizing."""
 
     model_name: str
     dimension: int
@@ -34,6 +34,8 @@ class OnnxMiniLmEmbeddingProvider:
         self._counting_tokenizer = None
 
     def _tokenizer(self):
+        """Lazily load an untruncated counting tokenizer, downloading if needed."""
+
         if self._counting_tokenizer is None:
             # Chroma has no public prepare method. This verified download also makes
             # tokenizer.json available before the first embedding call.
@@ -58,6 +60,11 @@ class OnnxMiniLmEmbeddingProvider:
         return len(self._tokenizer().encode(text).ids)
 
     def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        """Return one vector per input, checking dimensions; empty input skips inference.
+
+        The adapter may download/cache the model and truncates inputs at 256 tokens.
+        """
+
         if not texts:
             return []
         embeddings = self._model(texts)

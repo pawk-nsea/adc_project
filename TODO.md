@@ -1,112 +1,44 @@
-# ADC case checklist
+# ADC Submission Checklist
 
-Use this as the main checklist. `[x]` means ready; `[ ]` still needs work.
+Current stage: final code review and explicitly authorized GitHub delivery (DEC-070). The [review](docs/FINAL_CODE_REVIEW.md) records findings and local checks without implementation changes. The user reports final hardening, clean-install validation and both presentations complete; external setup/presentation evidence has not been independently reviewed here. Historical unchecked presentation items below describe repository evidence, not a request to repeat that work. [Evaluation evidence](docs/EVALUATION.md) separates measured results from remaining risks.
 
-## Deliverable 1 — Prototype repository
+## Prototype and repository
 
-### Required API
+- [x] Ingest PDFs, create local embeddings and persist metadata/vectors.
+- [x] Retrieve workspace evidence and the latest five messages.
+- [x] Generate and verify cited answers; persist completed turns.
+- [x] Provide a browser interface, PDF viewing and saved chats.
+- [x] Retain tests, evaluation fixtures and all eight sample PDFs.
+- [x] Curate README, architecture, decisions, requirements and evaluation evidence.
+- [x] Verify the documentation-only readability pass against the starting working tree.
+- [x] Review retained legacy test assertions against the current two-attempt failure contract (DEC-069; all 150 tests pass again in DEC-070).
+- [x] Keep credentials, runtime state, raw experiments and historical snapshots out of submission candidates.
+- [x] Finish focused cleanup verification and review the diff (41 targeted tests, eight packaged smoke checks).
+- [x] Reproduce setup on an independent clean machine (user-reported completion; not independently repeated in DEC-070).
+- [x] Separate current questions from retrieval hints, prioritize selected pages, calibrate models/prompts and improve correction; run focused live regressions (DEC-069).
+- [ ] Further reduce false semantic approvals, unsupported permissions/obligations and occasional irrelevant details; [current evidence](docs/QUALITY_IMPROVEMENT_RESULTS.md) records the unresolved cases.
+- [x] Rerun all active live fixture suites and diagnose the supplied meal/expense conversation.
+- [x] Obtain explicit instruction for the final commit/push (15 October 2026); Git history records the delivery outcome.
+- [ ] Confirm private-repository access for ADC reviewers.
 
-- [x] Python REST API using FastAPI.
-- [x] `POST /upload` accepts `conversation_id` and a PDF.
-- [x] Create or reuse the conversation.
-- [x] Parse PDF text and split it into logical chunks.
-- [x] Create embeddings and store them in Chroma.
-- [x] Save filename and upload time in SQLite.
-- [x] Return successful indexing as JSON.
-- [x] `POST /chat` accepts `conversation_id` and `message`.
-- [x] Load the last five messages.
-- [x] Retrieve relevant chunks with semantic search.
-- [x] Build the prompt from instructions, history, context, and question.
-- [x] Call Gemini and save the user and assistant messages.
-- [x] Return JSON with PDF/page citations.
+## Prototype presentation — 1–2 slides
 
-### Quality and demo
+- [x] Draft the [core architecture slide](docs/PROTOTYPE_ARCHITECTURE_SLIDE.md) showing inputs, interface, ingestion, retrieval, both prompts, generation, Python checks, verification and output.
+- [ ] Summarize decisions, observed quality, trade-offs and known limitations.
+- [ ] Rehearse upload, saved-chat restoration and citation inspection.
 
-- [x] Handle missing, invalid, empty, encrypted, large, and duplicate PDFs.
-- [x] Keep workspaces separate.
-- [x] Handle older and conflicting policies.
-- [x] Abstain when the documents do not support an answer.
-- [x] Provide a browser demo and saved chats.
-- [x] Add unit, integration, retrieval, and answer-quality tests.
-- [x] Document known limits honestly.
-- [ ] Re-test from a clean clone.
-- [ ] Run the final live demo with all eight PDFs.
+## Enterprise strategy presentation
 
-### Repository submission
+- [ ] Show repository connectors, queued ingestion workers, authorized retrieval and serving.
+- [ ] Select and justify cloud services, scaling, caching and operational targets.
+- [ ] Explain data-quality ownership and handling of conflicts/stale policies.
+- [ ] Define code/prompt/model/data versioning and evaluation/release gates.
+- [ ] Cover feedback, monitoring, query drift, privacy, incidents and retention.
+- [ ] Plan phased rollout and training for 10,000 employees.
 
-- [x] Include source code, tests, evaluation cases, and sample policies.
-- [x] Add local setup and run instructions to `README.md`.
-- [x] Add a short Design Decisions section to `README.md`.
-- [x] Keep secrets and generated files out of Git.
-- [x] Create the private GitHub repository `adc_project`.
-- [x] Push the reviewed `main` branch.
-- [ ] Give the ADC reviewers access.
-- [ ] Check the repository link in a private/incognito window.
+## Final review
 
-### Prototype presentation — 1–2 slides
-
-- [ ] Slide 1: problem, user flow, and prototype architecture.
-- [ ] Slide 2: key decisions, test evidence, limits, and next steps.
-- [ ] Prepare a short live demo: upload, ask, inspect citation, show conflict.
-
-## Deliverable 2 — Enterprise strategy presentation
-
-The audience is business stakeholders. Keep the story clear and practical.
-
-### Pillar 1 — Enterprise architecture
-
-- [ ] Draw the high-level architecture and communication flows.
-- [ ] Connect SharePoint and other internal document stores.
-- [ ] Separate slow ingestion jobs from fast chat requests.
-- [ ] Explain queues, retries, failures, latency, and caching.
-- [ ] Choose and justify Azure, AWS, or GCP services.
-- [ ] Show security, identity, access control, and data boundaries.
-
-### Pillar 2 — LLMOps and CI/CD
-
-- [ ] Show development, test, staging, and production deployment.
-- [ ] Explain how conflicting or poor-quality documents are handled.
-- [ ] Define automated retrieval and answer evaluations.
-- [ ] Add quality gates, comparison with the current version, and rollback.
-- [ ] Version code, prompts, models, evaluation data, and source documents.
-- [ ] Turn user feedback into reviewed test cases and improvements.
-
-### Pillar 3 — Trust and governance
-
-- [ ] Explain grounded answers, citations, abstention, and guardrails.
-- [ ] Define quality, safety, latency, cost, and failure monitoring.
-- [ ] Explain query/data drift detection and the response process.
-- [ ] Define owners, audit logs, retention, privacy, and incident handling.
-- [ ] Create a rollout and training plan for 10,000 employees.
-- [ ] Measure adoption, trust, helpfulness, and support needs.
-
-## What I must understand for the interview
-
-- [ ] Explain the complete upload-to-answer flow without notes.
-- [ ] Explain chunk size, overlap, page boundaries, and their trade-offs.
-- [ ] Explain embeddings, cosine similarity, top-k, and retrieval failures.
-- [ ] Explain Chroma versus a production vector database.
-- [ ] Explain context windows, token limits, and prompt construction.
-- [ ] Explain RAG, hallucinations, citations, conflicts, and abstention.
-- [ ] Defend FastAPI, SQLite, Chroma, MiniLM, and Gemini choices.
-- [ ] Explain the main failure paths and HTTP responses.
-- [ ] Explain what the tests prove—and what they do not prove.
-- [ ] Separate prototype choices from production architecture.
-- [ ] Link technical choices to accuracy, latency, cost, scale, and risk.
-
-## Final evaluation check
-
-- [ ] **Engineering:** code is readable, structured, tested, and extensible.
-- [ ] **GenAI depth:** explain chunking, embeddings, retrieval, and context limits.
-- [ ] **Consulting:** connect the design to business value and risk.
-- [ ] **Communication:** repository and slides are concise and professional.
-- [ ] Remove secrets, stale claims, broken links, and unnecessary files.
-- [ ] Rehearse expected questions and keep a backup demo/video.
-
-## Best next order
-
-1. Finish the enterprise strategy and diagrams.
-2. Create the prototype and strategy slides.
-3. Clean-clone test the repository.
-4. Push the final version and invite the reviewers.
-5. Rehearse the presentation and demo.
+- [ ] Engineering: readable code, clear boundaries and evidence-backed checks.
+- [ ] GenAI depth: explain chunking, embeddings, context and failure modes.
+- [ ] Consulting: connect prototype choices to enterprise value and risk.
+- [ ] Communication: concise documentation, accurate claims and a rehearsed demo.

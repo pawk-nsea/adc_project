@@ -1,0 +1,599 @@
+[
+  {
+    "id": "explicit_permission_good",
+    "expected_verdict": "pass",
+    "question": "May a research fellow enter Observatory Delta?",
+    "sources": [
+      {
+        "filename": "observatory_manual.pdf",
+        "text": "Research fellows may enter Observatory Delta after written approval from the Site Lead."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Yes. A research fellow may enter Observatory Delta after written approval from the Site Lead [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "A research fellow may enter Observatory Delta after written approval from the Site Lead.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {
+              "source_id": "S1",
+              "quote": "Research fellows may enter Observatory Delta after written approval from the Site Lead."
+            }
+          ],
+          "decision": {
+            "question_part": "Whether a research fellow may enter Observatory Delta",
+            "conclusion_type": "permission",
+            "actor": "research fellow",
+            "action": "enter Observatory Delta",
+            "scope": "Observatory Delta",
+            "conditions": ["written approval from the Site Lead"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "condition_is_not_permission_bad",
+    "expected_verdict": "revise",
+    "question": "May I store survey equipment in a locker if it is sealed?",
+    "sources": [
+      {
+        "filename": "survey_storage.pdf",
+        "text": "If survey equipment is stored in a locker, it must be sealed. This manual does not identify which storage locations are permitted."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Yes. You may store survey equipment in a locker as long as it is sealed [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "You may store survey equipment in a locker as long as it is sealed.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {
+              "source_id": "S1",
+              "quote": "If survey equipment is stored in a locker, it must be sealed."
+            }
+          ],
+          "decision": {
+            "question_part": "Whether locker storage is permitted",
+            "conclusion_type": "permission",
+            "actor": "survey worker",
+            "action": "store survey equipment in a locker",
+            "scope": "survey equipment storage",
+            "conditions": ["equipment is sealed"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "threshold_boundary_good",
+    "expected_verdict": "pass",
+    "question": "Does the manual establish that I may accept a token worth exactly 80 units?",
+    "sources": [
+      {
+        "filename": "token_manual.pdf",
+        "text": "Tokens over 30 units must be declared. Tokens over 80 units are prohibited."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "The prohibition on tokens over 80 units does not include a token worth exactly 80 units [S1]. A token worth 80 units must still be declared because it is over 30 units [S1]. The manual does not establish affirmative permission to accept it [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "The prohibition on tokens over 80 units does not include a token worth exactly 80 units.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Tokens over 80 units are prohibited."}
+          ],
+          "decision": {
+            "question_part": "Whether the threshold prohibits exactly 80 units",
+            "conclusion_type": "fact",
+            "actor": "token recipient",
+            "action": "accept a token worth exactly 80 units",
+            "scope": "token-value prohibition",
+            "conditions": ["prohibition applies only when value is greater than 80 units"]
+          }
+        },
+        {
+          "text": "A token worth 80 units must still be declared because it is over 30 units.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Tokens over 30 units must be declared."}
+          ],
+          "decision": {
+            "question_part": "Whether exactly 80 units must be declared",
+            "conclusion_type": "obligation",
+            "actor": "token recipient",
+            "action": "declare the token",
+            "scope": "token worth 80 units",
+            "conditions": ["value is greater than 30 units"]
+          }
+        },
+        {
+          "text": "The manual does not establish affirmative permission to accept it.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Tokens over 30 units must be declared. Tokens over 80 units are prohibited."}
+          ],
+          "decision": {
+            "question_part": "Whether affirmative permission is established",
+            "conclusion_type": "missing_guidance",
+            "actor": "token recipient",
+            "action": "accept the token",
+            "scope": "token worth exactly 80 units",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "threshold_becomes_permission_bad",
+    "expected_verdict": "revise",
+    "question": "May I accept a token worth exactly 80 units?",
+    "sources": [
+      {
+        "filename": "token_manual.pdf",
+        "text": "Tokens over 30 units must be declared. Tokens over 80 units are prohibited."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Yes. You may accept a token worth exactly 80 units as long as you declare it [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "You may accept a token worth exactly 80 units as long as you declare it.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Tokens over 30 units must be declared. Tokens over 80 units are prohibited."}
+          ],
+          "decision": {
+            "question_part": "Whether a token worth exactly 80 units may be accepted",
+            "conclusion_type": "permission",
+            "actor": "token recipient",
+            "action": "accept the token",
+            "scope": "token worth exactly 80 units",
+            "conditions": ["token is declared"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "consequence_gap_good",
+    "expected_verdict": "pass",
+    "question": "Is my report guaranteed to be approved if I file it 20 days after completion?",
+    "sources": [
+      {
+        "filename": "field_reports.pdf",
+        "text": "Reports must be filed within 10 days of completion. Reports filed after 30 days may be rejected."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "No approval is guaranteed. Filing after 20 days misses the 10-day deadline [S1]. The manual states possible rejection only for reports filed after 30 days [S1]. It does not state the outcome for days 11 through 30 [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "Filing after 20 days misses the 10-day deadline.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Reports must be filed within 10 days of completion."}
+          ],
+          "decision": {
+            "question_part": "Whether filing at 20 days meets the deadline",
+            "conclusion_type": "fact",
+            "actor": "report filer",
+            "action": "file the report",
+            "scope": "20 days after completion",
+            "conditions": ["deadline is within 10 days"]
+          }
+        },
+        {
+          "text": "The manual states possible rejection only for reports filed after 30 days.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Reports filed after 30 days may be rejected."}
+          ],
+          "decision": {
+            "question_part": "When possible rejection is documented",
+            "conclusion_type": "consequence",
+            "actor": "report filer",
+            "action": "have the report rejected",
+            "scope": "reports filed after 30 days",
+            "conditions": ["filing occurs more than 30 days after completion"]
+          }
+        },
+        {
+          "text": "It does not state the outcome for days 11 through 30.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Reports must be filed within 10 days of completion. Reports filed after 30 days may be rejected."}
+          ],
+          "decision": {
+            "question_part": "Whether approval or rejection is established at 20 days",
+            "conclusion_type": "missing_guidance",
+            "actor": "report filer",
+            "action": "receive an approval decision",
+            "scope": "days 11 through 30",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "consequence_transferred_bad",
+    "expected_verdict": "revise",
+    "question": "What happens if I file my report 20 days after completion?",
+    "sources": [
+      {
+        "filename": "field_reports.pdf",
+        "text": "Reports must be filed within 10 days of completion. Reports filed after 30 days may be rejected."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Your report may be rejected because it was filed after the 10-day deadline [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "Your report may be rejected because it was filed after the 10-day deadline.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Reports must be filed within 10 days of completion. Reports filed after 30 days may be rejected."}
+          ],
+          "decision": {
+            "question_part": "The consequence of filing after 20 days",
+            "conclusion_type": "consequence",
+            "actor": "report filer",
+            "action": "have the report rejected",
+            "scope": "report filed 20 days after completion",
+            "conditions": ["filing occurred after the 10-day deadline"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "actor_action_good",
+    "expected_verdict": "pass",
+    "question": "Can an employee claim reimbursement for a sponsor-paid workshop?",
+    "sources": [
+      {
+        "filename": "workshop_rules.pdf",
+        "text": "Sponsor-paid workshops must be recorded in the engagement register. Employees may claim reimbursement only for workshop costs they personally paid."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "No. An employee cannot claim reimbursement for a sponsor-paid workshop because the employee did not personally pay the cost [S1]. The separate sponsor-paid workshop must still be recorded in the engagement register [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "An employee cannot claim reimbursement for a sponsor-paid workshop because the employee did not personally pay the cost.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Employees may claim reimbursement only for workshop costs they personally paid."}
+          ],
+          "decision": {
+            "question_part": "Whether the employee may claim reimbursement",
+            "conclusion_type": "prohibition",
+            "actor": "employee",
+            "action": "claim reimbursement",
+            "scope": "sponsor-paid workshop cost",
+            "conditions": ["employee did not personally pay the cost"]
+          }
+        },
+        {
+          "text": "The separate sponsor-paid workshop must still be recorded in the engagement register.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Sponsor-paid workshops must be recorded in the engagement register."}
+          ],
+          "decision": {
+            "question_part": "The separate recording obligation",
+            "conclusion_type": "obligation",
+            "actor": "workshop participant",
+            "action": "record the workshop in the engagement register",
+            "scope": "sponsor-paid workshop",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "actor_action_substitution_bad",
+    "expected_verdict": "revise",
+    "question": "Can an employee claim reimbursement for a sponsor-paid workshop?",
+    "sources": [
+      {
+        "filename": "workshop_rules.pdf",
+        "text": "Sponsor-paid workshops must be recorded in the engagement register. Employees may claim reimbursement only for workshop costs they personally paid."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Yes. An employee may claim the sponsor-paid workshop as long as it is recorded in the engagement register [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "An employee may claim the sponsor-paid workshop as long as it is recorded in the engagement register.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Sponsor-paid workshops must be recorded in the engagement register. Employees may claim reimbursement only for workshop costs they personally paid."}
+          ],
+          "decision": {
+            "question_part": "Whether the employee may claim reimbursement",
+            "conclusion_type": "permission",
+            "actor": "employee",
+            "action": "claim reimbursement",
+            "scope": "sponsor-paid workshop",
+            "conditions": ["workshop is recorded"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "scope_application_good",
+    "expected_verdict": "pass",
+    "question": "What is the equipment limit at Station Pine?",
+    "sources": [
+      {
+        "filename": "station_limits.pdf",
+        "text": "Northern Zone equipment limit: 70 credits. Southern Zone equipment limit: 90 credits. Station Pine is in the Southern Zone."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Station Pine has an equipment limit of 90 credits because it is in the Southern Zone [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "Station Pine has an equipment limit of 90 credits because it is in the Southern Zone.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Southern Zone equipment limit: 90 credits. Station Pine is in the Southern Zone."}
+          ],
+          "decision": {
+            "question_part": "The equipment limit at Station Pine",
+            "conclusion_type": "fact",
+            "actor": "Station Pine",
+            "action": "use the applicable equipment limit",
+            "scope": "Southern Zone",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "scope_application_bad",
+    "expected_verdict": "revise",
+    "question": "What is the equipment limit at Station Pine?",
+    "sources": [
+      {
+        "filename": "station_limits.pdf",
+        "text": "Northern Zone equipment limit: 70 credits. Southern Zone equipment limit: 90 credits. Station Pine is in the Southern Zone."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Station Pine has an equipment limit of 70 credits under the Northern Zone rule [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "Station Pine has an equipment limit of 70 credits under the Northern Zone rule.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Northern Zone equipment limit: 70 credits."}
+          ],
+          "decision": {
+            "question_part": "The equipment limit at Station Pine",
+            "conclusion_type": "fact",
+            "actor": "Station Pine",
+            "action": "use the applicable equipment limit",
+            "scope": "Northern Zone",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "procedure_gap_good",
+    "expected_verdict": "pass",
+    "question": "How do I declare an artifact worth 40 credits?",
+    "sources": [
+      {
+        "filename": "artifact_code.pdf",
+        "text": "Artifacts over 25 credits must be declared to the Ethics Office. The code does not specify a form, channel, or submission workflow."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "An artifact worth 40 credits must be declared to the Ethics Office [S1]. The code does not specify a form, channel, or submission workflow [S1]. Contact the named Ethics Office for the current method.",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "An artifact worth 40 credits must be declared to the Ethics Office.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Artifacts over 25 credits must be declared to the Ethics Office."}
+          ],
+          "decision": {
+            "question_part": "Whether and to whom the artifact must be declared",
+            "conclusion_type": "obligation",
+            "actor": "artifact recipient",
+            "action": "declare the artifact to the Ethics Office",
+            "scope": "artifact worth 40 credits",
+            "conditions": ["value is greater than 25 credits"]
+          }
+        },
+        {
+          "text": "The code does not specify a form, channel, or submission workflow.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "The code does not specify a form, channel, or submission workflow."}
+          ],
+          "decision": {
+            "question_part": "How to complete the declaration",
+            "conclusion_type": "missing_guidance",
+            "actor": "artifact recipient",
+            "action": "use a declaration form, channel, or workflow",
+            "scope": "artifact declaration procedure",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "procedure_omitted_bad",
+    "expected_verdict": "revise",
+    "question": "How do I declare an artifact worth 40 credits?",
+    "sources": [
+      {
+        "filename": "artifact_code.pdf",
+        "text": "Artifacts over 25 credits must be declared to the Ethics Office. The code does not specify a form, channel, or submission workflow."
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "An artifact worth 40 credits must be declared [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "An artifact worth 40 credits must be declared.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Artifacts over 25 credits must be declared to the Ethics Office."}
+          ],
+          "decision": {
+            "question_part": "Whether the artifact must be declared",
+            "conclusion_type": "obligation",
+            "actor": "artifact recipient",
+            "action": "declare the artifact",
+            "scope": "artifact worth 40 credits",
+            "conditions": ["value is greater than 25 credits"]
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "historical_permission_not_current_bad",
+    "expected_verdict": "revise",
+    "question": "May technicians currently use a bronze access token?",
+    "sources": [
+      {
+        "filename": "temporary_access_note.pdf",
+        "text": "Technicians may use a bronze access token during the temporary program.",
+        "authority": {
+          "authority_state": "historical_interim",
+          "authority_reason": "The note was interim pending the permanent access standard."
+        }
+      },
+      {
+        "filename": "permanent_access_standard.pdf",
+        "text": "The permanent access standard requires identity verification. It does not specify whether bronze access tokens may be used.",
+        "authority": {
+          "authority_state": "governing_lifecycle_successor",
+          "authority_reason": "This standard matches the lifecycle target named by the temporary note."
+        }
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Yes, technicians may currently use a bronze access token [S1].",
+      "source_ids": ["S1"],
+      "claims": [
+        {
+          "text": "Yes, technicians may currently use a bronze access token.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Technicians may use a bronze access token during the temporary program."}
+          ],
+          "decision": {
+            "question_part": "Whether technicians may currently use a bronze access token",
+            "conclusion_type": "permission",
+            "actor": "technicians",
+            "action": "use a bronze access token",
+            "scope": "current permanent access program",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "historical_permission_current_gap_good",
+    "expected_verdict": "pass",
+    "question": "May technicians currently use a bronze access token?",
+    "sources": [
+      {
+        "filename": "temporary_access_note.pdf",
+        "text": "Technicians may use a bronze access token during the temporary program.",
+        "authority": {
+          "authority_state": "historical_interim",
+          "authority_reason": "The note was interim pending the permanent access standard."
+        }
+      },
+      {
+        "filename": "permanent_access_standard.pdf",
+        "text": "The permanent access standard requires identity verification. It does not specify whether bronze access tokens may be used.",
+        "authority": {
+          "authority_state": "governing_lifecycle_successor",
+          "authority_reason": "This standard matches the lifecycle target named by the temporary note."
+        }
+      }
+    ],
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "The current standard does not specify whether technicians may use a bronze access token [S2]. The permission appears only in the historical temporary note [S1].",
+      "source_ids": ["S2", "S1"],
+      "claims": [
+        {
+          "text": "The current standard does not specify whether technicians may use a bronze access token.",
+          "source_ids": ["S2"],
+          "evidence_quotes": [
+            {"source_id": "S2", "quote": "It does not specify whether bronze access tokens may be used."}
+          ],
+          "decision": {
+            "question_part": "Whether technicians may currently use a bronze access token",
+            "conclusion_type": "missing_guidance",
+            "actor": "technicians",
+            "action": "use a bronze access token",
+            "scope": "current permanent access program",
+            "conditions": []
+          }
+        },
+        {
+          "text": "The permission appears only in the historical temporary note.",
+          "source_ids": ["S1"],
+          "evidence_quotes": [
+            {"source_id": "S1", "quote": "Technicians may use a bronze access token during the temporary program."}
+          ],
+          "decision": {
+            "question_part": "Historical status of the bronze-token permission",
+            "conclusion_type": "fact",
+            "actor": "temporary access note",
+            "action": "document the former bronze-token permission",
+            "scope": "historical temporary program",
+            "conditions": []
+          }
+        }
+      ]
+    }
+  }
+]

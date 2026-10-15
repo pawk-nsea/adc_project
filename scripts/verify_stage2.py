@@ -1,4 +1,4 @@
-"""Run the real Stage 2 stack against every supplied policy PDF."""
+"""Smoke-check real PDF ingestion, embedding dimensions and Chroma persistence for eight samples."""
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -18,6 +18,11 @@ POLICY_DIRECTORY = Path("data/sampleset_policies/sampleset_policies")
 
 
 def main() -> None:
+    """Index all samples in temporary storage and reopen vectors to check persistence.
+
+    Uses/downloads the local embedding cache; no hosted generation or audit is called.
+    """
+
     policy_paths = sorted(POLICY_DIRECTORY.glob("*.pdf"))
     if len(policy_paths) != 8:
         raise RuntimeError(f"Expected 8 policy PDFs, found {len(policy_paths)}.")

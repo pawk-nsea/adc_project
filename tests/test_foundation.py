@@ -1,8 +1,12 @@
+"""Check application startup, relational schema and basic HTTP input validation."""
+
 import asyncio
 
 import httpx
 from fastapi import FastAPI
-from sqlalchemy import inspect
+from sqlalchemy import inspect, text
+
+from app.database import Database
 
 
 def request(
@@ -109,3 +113,25 @@ def test_database_schema_is_created(application: FastAPI) -> None:
     table_names = asyncio.run(create_schema())
 
     assert table_names == {"conversations", "documents", "messages"}
+
+
+def test_existing_sqlite_documents_table_gets_additive_document_columns(tmp_path) -> None:
+    database = Database(f"sqlite:///{tmp_path / 'legacy.db'}")
+    with database.engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE TABLE documents ("
+                "id VARCHAR(36) PRIMARY KEY, conversation_id VARCHAR(128), "
+                "filename VARCHAR(255), uploaded_at DATETIME, "
+                "content_sha256 VARCHAR(64), page_count INTEGER, "
+                "chunk_count INTEGER, status VARCHAR(32))"
+            )
+        )
+
+    database.create_tables()
+
+    columns = {
+        column["name"] for column in inspect(database.engine).get_columns("documents")
+    }
+    assert {"content_bytes", "authority_metadata_json"} <= columns
+    database.close()

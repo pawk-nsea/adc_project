@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Launch the local API and browser UI from .venv, optionally opening a browser.
 
 set -euo pipefail
 

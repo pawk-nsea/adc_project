@@ -1,4 +1,4 @@
-"""Public request and response contracts."""
+"""Define Pydantic request validation and public API response shapes."""
 
 from datetime import datetime
 from typing import Literal
@@ -23,6 +23,7 @@ class UploadResponse(BaseModel):
     status: str
     chunks_indexed: int
     uploaded_at: datetime
+    source_view_available: bool = True
 
 
 class ChatRequest(StrictTextModel):
@@ -31,7 +32,9 @@ class ChatRequest(StrictTextModel):
 
 
 class Citation(BaseModel):
+    # Numbers are local to an answer; document ID and one-based page locate the PDF.
     id: int = Field(ge=1)
+    document_id: str | None = None
     filename: str
     page: int = Field(ge=1)
 
@@ -49,9 +52,11 @@ class ConversationDocumentResponse(BaseModel):
     status: str
     chunks_indexed: int
     uploaded_at: datetime
+    source_view_available: bool
 
 
 class ConversationMessageResponse(BaseModel):
+    # Restored messages retain citations, but the stored record has no status field.
     role: Literal["user", "assistant"]
     content: str
     citations: list[Citation]

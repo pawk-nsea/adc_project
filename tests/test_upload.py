@@ -1,3 +1,5 @@
+"""Check PDF upload validation, indexing state, duplicate scope and original-source access."""
+
 import asyncio
 from pathlib import Path
 
@@ -64,6 +66,10 @@ def test_upload_indexes_pdf_and_persists_provenance(application: FastAPI) -> Non
         assert document.status == DocumentStatus.INDEXED
         assert document.page_count >= 1
         assert document.chunk_count == body["chunks_indexed"]
+        assert document.content_bytes == POLICY_PATH.read_bytes()
+        assert document.authority_metadata_json is not None
+        assert document.authority_metadata_json["policy_id"] == "FIN-T&E-001"
+        assert document.authority_metadata_json["effective_date"] == "2022-06-01"
 
     records = application.state.fake_vector_store.records.values()
     assert len(list(records)) == body["chunks_indexed"]
@@ -74,6 +80,33 @@ def test_upload_indexes_pdf_and_persists_provenance(application: FastAPI) -> Non
         and record["embedding_model"] == "test/fake-embedding"
         for record in application.state.fake_vector_store.records.values()
     )
+
+
+def test_uploaded_pdf_can_be_opened_only_from_its_own_conversation(
+    application: FastAPI,
+) -> None:
+    uploaded = upload(application, "conversation-a")
+    document_id = uploaded.json()["document_id"]
+
+    opened = request(
+        application,
+        "GET",
+        f"/documents/{document_id}/content",
+        params={"conversation_id": "conversation-a"},
+    )
+    cross_conversation = request(
+        application,
+        "GET",
+        f"/documents/{document_id}/content",
+        params={"conversation_id": "conversation-b"},
+    )
+
+    assert opened.status_code == 200
+    assert opened.content == POLICY_PATH.read_bytes()
+    assert opened.headers["content-type"] == "application/pdf"
+    assert opened.headers["content-disposition"].startswith("inline;")
+    assert opened.headers["x-content-type-options"] == "nosniff"
+    assert cross_conversation.status_code == 404
 
 
 def test_duplicate_is_scoped_to_conversation(application: FastAPI) -> None:

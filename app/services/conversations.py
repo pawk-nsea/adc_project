@@ -1,4 +1,4 @@
-"""Conversation history, restoration, and deletion for the web workspace."""
+"""Read saved workspaces and original PDFs, and coordinate deletion across both stores."""
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -20,6 +20,14 @@ class ConversationDeletionError(RuntimeError):
     pass
 
 
+class DocumentContentNotFoundError(LookupError):
+    pass
+
+
+class DocumentContentUnavailableError(LookupError):
+    pass
+
+
 @dataclass(frozen=True)
 class DocumentSummary:
     document_id: str
@@ -27,6 +35,7 @@ class DocumentSummary:
     status: str
     chunks_indexed: int
     uploaded_at: datetime
+    source_view_available: bool
 
 
 @dataclass(frozen=True)
@@ -55,6 +64,12 @@ class ConversationListItem:
     message_count: int
 
 
+@dataclass(frozen=True)
+class DocumentContent:
+    filename: str
+    content: bytes
+
+
 class ConversationService:
     """Manage durable conversation state used by the lightweight web client."""
 
@@ -71,7 +86,11 @@ class ConversationService:
         return normalized[:55].rstrip() + "…"
 
     def list_conversations(self) -> list[ConversationListItem]:
-        """List saved workspaces by latest document or message activity."""
+        """List nonempty workspaces by activity, deriving titles from question or filename.
+
+        Indexed documents and all saved messages count; empty/failed-only uploads
+        without messages are omitted. This reads all workspaces without user filtering.
+        """
 
         with self._database.session_factory() as session:
             conversations = list(session.scalars(select(Conversation)).all())
@@ -123,6 +142,8 @@ class ConversationService:
         return sorted(items, key=lambda item: item.updated_at, reverse=True)
 
     def get_summary(self, conversation_id: str) -> ConversationSummary:
+        """Restore indexed sources and chronological messages, or reject an unknown ID."""
+
         with self._database.session_factory() as session:
             conversation = session.get(Conversation, conversation_id)
             if conversation is None:
@@ -156,6 +177,7 @@ class ConversationService:
                     status=document.status,
                     chunks_indexed=document.chunk_count or 0,
                     uploaded_at=document.uploaded_at,
+                    source_view_available=document.content_bytes is not None,
                 )
                 for document in documents
             ],
@@ -173,8 +195,44 @@ class ConversationService:
             ],
         )
 
+    def get_document_content(
+        self,
+        *,
+        conversation_id: str,
+        document_id: str,
+    ) -> DocumentContent:
+        """Return retained PDF bytes for an indexed document in the requested workspace.
+
+        Missing membership raises DocumentContentNotFoundError; legacy uploads
+        without bytes raise DocumentContentUnavailableError. No caller is authenticated.
+        """
+
+        with self._database.session_factory() as session:
+            document = session.scalar(
+                select(Document).where(
+                    Document.id == document_id,
+                    Document.conversation_id == conversation_id,
+                    Document.status == DocumentStatus.INDEXED,
+                )
+            )
+            if document is None:
+                raise DocumentContentNotFoundError("PDF source not found.")
+            if document.content_bytes is None:
+                raise DocumentContentUnavailableError(
+                    "The original PDF was indexed before source viewing was enabled. "
+                    "Upload it again in a new chat to make it viewable."
+                )
+            return DocumentContent(
+                filename=document.filename,
+                content=document.content_bytes,
+            )
+
     def delete_conversation(self, conversation_id: str) -> None:
-        """Permanently remove a workspace from vectors and relational storage."""
+        """Delete document vectors, then commit deletion of SQL messages/uploads/workspace.
+
+        Failure raises ConversationDeletionError. SQL records remain after a vector
+        failure, but earlier vector deletions cannot be rolled back across stores.
+        """
 
         with self._database.session_factory() as session:
             if session.get(Conversation, conversation_id) is None:

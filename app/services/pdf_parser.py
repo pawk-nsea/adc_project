@@ -1,4 +1,4 @@
-"""Page-aware PDF text extraction."""
+"""Extract readable PDF text for ingestion while retaining original page numbers."""
 
 import re
 from dataclasses import dataclass
@@ -20,6 +20,8 @@ class ParsedPage:
 
 @dataclass(frozen=True)
 class ParsedPdf:
+    """Total PDF page count plus only the pages containing extractable text."""
+
     page_count: int
     pages: list[ParsedPage]
 
@@ -36,7 +38,11 @@ def _normalize_page_text(text: str) -> str:
 
 
 def parse_pdf(content: bytes) -> ParsedPdf:
-    """Extract non-empty pages with their original one-based page numbers."""
+    """Read PDF bytes without OCR, skipping empty pages but keeping their numbering.
+
+    Raise PdfParseError for encryption, unreadable input or no extractable text.
+    Text extraction does not reconstruct table or column layout.
+    """
 
     try:
         reader = PdfReader(BytesIO(content))

@@ -1,4 +1,4 @@
-"""Deterministic, page-local, token-aware text chunking."""
+"""Split extracted pages into bounded embedding inputs with citation provenance."""
 
 import re
 from dataclasses import dataclass
@@ -13,6 +13,8 @@ class TokenCounter(Protocol):
 
 @dataclass(frozen=True)
 class TextChunk:
+    """Indexable text with a stable ID and its workspace, document and PDF page."""
+
     id: str
     document_id: str
     conversation_id: str
@@ -27,6 +29,8 @@ def _join(parts: list[str]) -> str:
 
 
 def _split_words(text: str, counter: TokenCounter, target_tokens: int) -> list[str]:
+    """Split oversized sentences at whitespace; indivisible words remain intact."""
+
     words = text.split()
     groups: list[str] = []
     current: list[str] = []
@@ -43,6 +47,8 @@ def _split_words(text: str, counter: TokenCounter, target_tokens: int) -> list[s
 
 
 def _logical_units(text: str, counter: TokenCounter, target_tokens: int) -> list[str]:
+    """Prefer paragraphs, then sentences, then words when a unit exceeds the target."""
+
     paragraphs = [part.strip() for part in re.split(r"\n\s*\n", text) if part.strip()]
     units: list[str] = []
     for paragraph in paragraphs:
@@ -63,6 +69,8 @@ def _logical_units(text: str, counter: TokenCounter, target_tokens: int) -> list
 
 
 def _overlap_suffix(text: str, counter: TokenCounter, overlap_tokens: int) -> str:
+    """Copy trailing whole words, keeping at least one even if it exceeds the budget."""
+
     suffix: list[str] = []
     for word in reversed(text.split()):
         candidate = " ".join(reversed([*suffix, word]))
@@ -79,6 +87,8 @@ def _chunk_page(
     max_tokens: int,
     overlap_tokens: int,
 ) -> list[str]:
+    """Pack one page's units and reuse a suffix when it fits the hard maximum."""
+
     units = _logical_units(text, counter, target_tokens)
     chunks: list[str] = []
     current: list[str] = []
@@ -92,12 +102,14 @@ def _chunk_page(
             current = [overlap] if overlap else []
             candidate = _join([*current, unit])
             if counter.count_tokens(candidate) > max_tokens:
+                # Drop repeated context rather than the next unit's original text.
                 current = []
         current.append(unit)
 
     if current:
         chunks.append(_join(current))
     if any(counter.count_tokens(chunk) > max_tokens for chunk in chunks):
+        # A single unsplittable word can still exceed the limit; fail explicitly.
         raise ValueError("Chunking produced text above the configured token maximum.")
     return chunks
 
@@ -113,7 +125,11 @@ def create_chunks(
     max_tokens: int,
     overlap_tokens: int,
 ) -> list[TextChunk]:
-    """Create stable chunks without ever mixing PDF pages."""
+    """Return page-local chunks with IDs derived from document, page and position.
+
+    The supplied counter must match the embedding tokenizer. Invalid settings or
+    an indivisible unit above the maximum raise ValueError; no storage is written.
+    """
 
     if not 0 <= overlap_tokens < target_tokens <= max_tokens:
         raise ValueError("Chunk token settings must satisfy 0 <= overlap < target <= max.")

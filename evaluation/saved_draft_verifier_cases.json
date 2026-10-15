@@ -1,0 +1,933 @@
+[
+  {
+    "id": "saved_vendor_paid_dinner_claim",
+    "question": "Can I claim a vendor paid dinner?",
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Vendors may host events involving dinners, and accepting vendor-sponsored meals must comply with both the Travel & Expense Policy and the Code of Business Conduct [S2]. All invoices, receipts, or sponsorship acknowledgements should be recorded to avoid conflicts of interest and ensure proper reconciliation [S2]. High-value vendor engagements may require Finance, Compliance, and Procurement sign-offs [S2]. Please note that the specific reimbursement limit for the dinner depends on whether it falls within standard daily meal caps (such as the USD 45 dinner limit) [S4] or involves other specific claim conditions, which are unspecified."
+    },
+    "sources": [
+      {
+        "source_id": "S1",
+        "filename": "Code of Business Conduct.pdf",
+        "page": 1,
+        "text": "Code of Business Conduct & Ethics\nPolicy ID: LEG-ETH-001\nVersion: 5.1\nEffective Date: 1 January 2025\nStatement from Leadership\nApex Global\u2019s reputation is built on ethical conduct and personal accountability.\n\nThis Code\noutlines the principles that guide our decisions and actions across all markets in which we\noperate.\n\n1.\n\nGifts & Entertainment\n\u2022 Gifts over USD 100 must be disclosed.\n\n\u2022 Gifts over USD 250 are prohibited.\n\n\u2022 Client-hosted dinners or entertainment may be accepted but must be reported in\nconjunction with Finance policies to ensure reimbursement limits and conflicts of\ninterest are observed.\n\nEmployees should consult both the Code of Business Conduct and the Travel & Expense\nPolicy when submitting claims for client-hosted meals or entertainment.\n\nScenarios\ninclude:\n\u2022 Client Dinner: If the client pays for a dinner exceeding the standard USD 45 limit,\nemployees must still record and disclose it.\n\n\u2022 Alcohol at Client Events: Alcohol can be consumed at client-hosted events but\nreimbursement requires disclosure.\n\n\u2022 Multiple Approvals: Some high-value client dinners may require both Finance and\nCompliance approval.\n\nEmployees must ensure that accepting such benefits does not create a conflict of interest,\nin line with corporate ethics standards.\n\n3.\n\nConflicts of Interest\nEmployees must disclose any personal or financial interests that could influence business\ndecisions.\n\nThis includes accepting meals, gifts, or reimbursements that may affect\ndecision-making.",
+        "authority": {
+          "title": "Code of Business Conduct & Ethics",
+          "document_type": "policy",
+          "policy_id": "LEG-ETH-001",
+          "version": "5.1",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "business",
+            "conduct",
+            "ethics",
+            "leg-eth-001"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S2",
+        "filename": "vendor_procurement_policy.pdf",
+        "page": 1,
+        "text": "Vendor Procurement & Approval Policy\nPolicy ID: OPS-PRC-007\nVersion: 3.3\nEffective Date: 1 February 2025\nOverview\nThis policy supports transparent, competitive, and responsible procurement practices.\nEmployees are expected to engage vendors in a manner that delivers value while managing\nrisk and ensuring compliance with internal controls.\n1. Approval Thresholds\nSpend Approval\n< USD 25,000 Manager\nUSD 25,000\u2013100,000 Director\n> USD 100,000 Executive Committee\n\n2. Interaction With Expense and Ethics Policies\nCertain procurement activities overlap with T&E and ethics policies:\n\u2022 Client-Sponsored Events: Vendors may host events, including dinners or offsite\nmeetings, which involve reimbursements or gifts. Employees must ensure that\naccepting vendor-sponsored meals complies with both Travel & Expense Policy and\nCode of Business Conduct.\n\u2022 Multiple Approvals: High-value vendor engagements may require Finance,\nCompliance, and Procurement sign-offs.\n\u2022 Documentation: All invoices, receipts, or sponsorship acknowledgements should\nbe recorded to avoid conflicts of interest and ensure proper reconciliation in\nfinancial systems.\n3. Approved Vendors\nAll purchases must use approved vendors listed in the Procurement Portal.\n4. Exceptions\nExceptions require written justification and CFO approval.",
+        "authority": {
+          "title": "Vendor Procurement & Approval Policy",
+          "document_type": "policy",
+          "policy_id": "OPS-PRC-007",
+          "version": "3.3",
+          "effective_date": "2025-02-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "approval",
+            "ops-prc-007",
+            "procurement",
+            "vendor"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S3",
+        "filename": "workplace_policy.pdf",
+        "page": 2,
+        "text": "items. \u2022 Equipment remains the property of the employee. \u2022 Reimbursements must be submitted within 60 days of purchase.\n\n7. Security & Compliance\n\u2022 Employees must comply with all Information Security policies.\n\u2022 Public Wi-Fi use requires VPN connection.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S4",
+        "filename": "reimbursement_2025.pdf",
+        "page": 2,
+        "text": "(Tokyo, Singapore, Hong Kong, Zurich): - Asia-Pacific cap may increase to USD 230 - Requires pre-trip Finance approval\n\n6. Meals & Incidentals (Daily Caps)\n\u2022 Breakfast: USD 20\n\u2022 Lunch: USD 25\n\u2022 Dinner: USD 45\n\u2022 Tips capped at 15%\nAlcohol is only reimbursable when part of a documented client meal.\n\n7. Non-Reimbursable Expenses\n\u2022 Personal travel upgrades\n\u2022 Mini-bar charges\n\u2022 Airline lounge memberships\n\u2022 Expenses incurred by family members",
+        "authority": {
+          "title": "Global Travel & Expense Reimbursement Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "3.2",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "reimbursement",
+            "travel"
+          ],
+          "authority_state": "governing_explicit_supersession",
+          "authority_reason": "Latest retrieved version of policy ID FIN-T&E-001; the document explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S5",
+        "filename": "travel_expenses_2022.pdf",
+        "page": 2,
+        "text": "(Tokyo, Singapore, Hong Kong, Zurich): - Asia-Pacific cap may increase to USD 230 - Requires pre-trip Finance approval\n\n6. Meals & Incidentals (Daily Caps)\n\u2022 Breakfast: USD 20\n\u2022 Lunch: USD 25\n\u2022 Dinner: USD 45\n\u2022 Tips capped at 15%\nAlcohol is only reimbursable when part of a documented client meal.\n\n7. Non-Reimbursable Expenses\n\u2022 Personal travel upgrades\n\u2022 Mini-bar charges\n\u2022 Airline lounge memberships\n\u2022 Expenses incurred by family members",
+        "authority": {
+          "title": "Global Travel & Expense Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "2.6",
+          "effective_date": "2022-06-01",
+          "lifecycle_signal": "historical_signal",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "travel"
+          ],
+          "authority_state": "historical_explicitly_superseded",
+          "authority_reason": "A later retrieved version of policy ID FIN-T&E-001 explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S6",
+        "filename": "workplace_policy.pdf",
+        "page": 1,
+        "text": "Workplace & Flexible Work Policy\nPolicy ID: HR-WRK-012\nVersion: 3.0\nEffective Date: 1 March 2025\nOwner: Human Resources\n\nPolicy Intent\nApex Global is committed to providing a productive, safe, and flexible workplace\nenvironment that supports both on-site and remote employees. This policy consolidates\nprior remote work, office attendance, and workplace support guidelines into a single\nframework intended to promote consistency, employee well-being, and operational\neffectiveness.\nThis policy replaces earlier standalone Remote & Hybrid Work policies unless otherwise\nstated.\n\n1. Scope\nThis policy applies to all regular full-time and part-time employees of Apex Global. Certain\nroles may be subject to additional workplace requirements due to regulatory, operational,\nor security considerations.\n\n2. Workplace Models\n\u2022 On-site: Employees work primarily from an Apex Global office location.\n\u2022 Hybrid: Employees split time between an Apex Global office and a remote location.\n\u2022 Remote: Employees work primarily from a remote location approved by their\nmanager and HR.\n\n3. Eligibility & Approval\n\u2022 Employees must have a minimum of 6 months of service to be eligible for hybrid or\nremote arrangements.\n\u2022 Participation is subject to manager approval and periodic review.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S7",
+        "filename": "reimbursement_2025.pdf",
+        "page": 1,
+        "text": "Global Travel & Expense Reimbursement Policy\nPolicy ID: FIN-T&E-001\nVersion: 3.2\nEffective Date: 1 January 2025\nLast Reviewed: 15 December 2024\nOwner: Finance Operations\n\nExecutive Overview\nAt Apex Global, business travel plays a critical role in supporting client relationships,\ncross-regional collaboration, and strategic growth initiatives. This policy reflects Apex\nGlobal\u2019s commitment to balancing employee flexibility with prudent financial stewardship.\nAll employees are expected to exercise sound judgment and align travel decisions with the\nfirm\u2019s values of integrity, accountability, and operational excellence.\nThis document supersedes prior versions unless explicitly stated otherwise. Employees\nare responsible for familiarizing themselves with the contents of this policy prior to\nincurring any travel-related expenses.\n\n1. Purpose\nThis policy establishes guidelines for reimbursable travel and business expenses incurred\nby Apex Global employees to ensure fiscal responsibility, regulatory compliance, and fair\ntreatment across regions.\n\n2. Scope\nThis policy applies to all full-time employees, part-time employees, and long-term\ncontractors traveling on behalf of Apex Global.\n\n3. General Reimbursement Principles\n\u2022 Expenses must be business-related, reasonable, and necessary.\n\u2022 Itemized receipts are required for all expenses above USD 25.\n\u2022 Expenses must be submitted within 30 days of travel completion.\n\u2022 Expenses submitted after 60 days may be denied without exception.",
+        "authority": {
+          "title": "Global Travel & Expense Reimbursement Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "3.2",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "reimbursement",
+            "travel"
+          ],
+          "authority_state": "governing_explicit_supersession",
+          "authority_reason": "Latest retrieved version of policy ID FIN-T&E-001; the document explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S8",
+        "filename": "travel_expenses_2022.pdf",
+        "page": 1,
+        "text": "Global Travel & Expense Policy\nPolicy ID: FIN-T&E-001\nVersion: 2.6\nEffective Date: 1 June 2022\nOwner: Corporate Finance\nExecutive Overview\nAt Apex Global, business travel plays a critical role in supporting client relationships,\ncross-regional collaboration, and strategic growth initiatives. This policy reflects Apex\nGlobal\u2019s commitment to balancing employee flexibility with prudent financial stewardship.\nAll employees are expected to exercise sound judgment and align travel decisions with the\nfirm\u2019s values of integrity, accountability, and operational excellence.\nThis policy version was issued during a period of rapid international expansion and reflects\nhistorical cost benchmarks and approval practices. Employees are responsible for\nfamiliarizing themselves with the contents of this policy prior to incurring any travel-related\nexpenses. Employees should be aware that newer guidance may exist.\n\n1. Purpose\nThis policy establishes guidelines for reimbursable travel and business expenses incurred\nby Apex Global employees to ensure fiscal responsibility, regulatory compliance, and fair\ntreatment across regions.\n\n2. Scope\nThis policy applies to all full-time employees, part-time employees, and long-term\ncontractors traveling on behalf of Apex Global.\n\n3. General Reimbursement Principles\n\u2022 Expenses must be business-related, reasonable, and necessary.\n\u2022 Itemized receipts are required for all expenses above USD 25.\n\u2022 Expenses must be submitted within 90 days of travel completion.\n\u2022 Expenses submitted after 120 days may be denied without exception.",
+        "authority": {
+          "title": "Global Travel & Expense Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "2.6",
+          "effective_date": "2022-06-01",
+          "lifecycle_signal": "historical_signal",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "travel"
+          ],
+          "authority_state": "historical_explicitly_superseded",
+          "authority_reason": "A later retrieved version of policy ID FIN-T&E-001 explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S9",
+        "filename": "Code of Business Conduct.pdf",
+        "page": 2,
+        "text": "4. Speak-Up Policy\nEmployees are encouraged to report concerns without fear of retaliation.",
+        "authority": {
+          "title": "Code of Business Conduct & Ethics",
+          "document_type": "policy",
+          "policy_id": "LEG-ETH-001",
+          "version": "5.1",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "business",
+            "conduct",
+            "ethics",
+            "leg-eth-001"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      }
+    ],
+    "expected_verdict": "revise"
+  },
+  {
+    "id": "saved_gift_disclosure_procedure_gap",
+    "question": "How can I disclose a gift?",
+    "candidate_answer": {
+      "status": "insufficient_context",
+      "answer": "Gifts over USD 100 must be disclosed and gifts over USD 250 are prohibited, but the specific procedure, method, or recipient for submitting a gift disclosure is unspecified."
+    },
+    "sources": [
+      {
+        "source_id": "S1",
+        "filename": "Code of Business Conduct.pdf",
+        "page": 1,
+        "text": "Code of Business Conduct & Ethics\nPolicy ID: LEG-ETH-001\nVersion: 5.1\nEffective Date: 1 January 2025\nStatement from Leadership\nApex Global\u2019s reputation is built on ethical conduct and personal accountability.\n\nThis Code\noutlines the principles that guide our decisions and actions across all markets in which we\noperate.\n\n1.\n\nGifts & Entertainment\n\u2022 Gifts over USD 100 must be disclosed.\n\n\u2022 Gifts over USD 250 are prohibited.\n\n\u2022 Client-hosted dinners or entertainment may be accepted but must be reported in\nconjunction with Finance policies to ensure reimbursement limits and conflicts of\ninterest are observed.\n\nEmployees should consult both the Code of Business Conduct and the Travel & Expense\nPolicy when submitting claims for client-hosted meals or entertainment.\n\nScenarios\ninclude:\n\u2022 Client Dinner: If the client pays for a dinner exceeding the standard USD 45 limit,\nemployees must still record and disclose it.\n\n\u2022 Alcohol at Client Events: Alcohol can be consumed at client-hosted events but\nreimbursement requires disclosure.\n\n\u2022 Multiple Approvals: Some high-value client dinners may require both Finance and\nCompliance approval.\n\nEmployees must ensure that accepting such benefits does not create a conflict of interest,\nin line with corporate ethics standards.\n\n3.\n\nConflicts of Interest\nEmployees must disclose any personal or financial interests that could influence business\ndecisions.\n\nThis includes accepting meals, gifts, or reimbursements that may affect\ndecision-making.",
+        "authority": {
+          "title": "Code of Business Conduct & Ethics",
+          "document_type": "policy",
+          "policy_id": "LEG-ETH-001",
+          "version": "5.1",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "business",
+            "conduct",
+            "ethics",
+            "leg-eth-001"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S2",
+        "filename": "vendor_procurement_policy.pdf",
+        "page": 1,
+        "text": "Vendor Procurement & Approval Policy\nPolicy ID: OPS-PRC-007\nVersion: 3.3\nEffective Date: 1 February 2025\nOverview\nThis policy supports transparent, competitive, and responsible procurement practices.\nEmployees are expected to engage vendors in a manner that delivers value while managing\nrisk and ensuring compliance with internal controls.\n1. Approval Thresholds\nSpend Approval\n< USD 25,000 Manager\nUSD 25,000\u2013100,000 Director\n> USD 100,000 Executive Committee\n\n2. Interaction With Expense and Ethics Policies\nCertain procurement activities overlap with T&E and ethics policies:\n\u2022 Client-Sponsored Events: Vendors may host events, including dinners or offsite\nmeetings, which involve reimbursements or gifts. Employees must ensure that\naccepting vendor-sponsored meals complies with both Travel & Expense Policy and\nCode of Business Conduct.\n\u2022 Multiple Approvals: High-value vendor engagements may require Finance,\nCompliance, and Procurement sign-offs.\n\u2022 Documentation: All invoices, receipts, or sponsorship acknowledgements should\nbe recorded to avoid conflicts of interest and ensure proper reconciliation in\nfinancial systems.\n3. Approved Vendors\nAll purchases must use approved vendors listed in the Procurement Portal.\n4. Exceptions\nExceptions require written justification and CFO approval.",
+        "authority": {
+          "title": "Vendor Procurement & Approval Policy",
+          "document_type": "policy",
+          "policy_id": "OPS-PRC-007",
+          "version": "3.3",
+          "effective_date": "2025-02-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "approval",
+            "ops-prc-007",
+            "procurement",
+            "vendor"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S3",
+        "filename": "workplace_policy.pdf",
+        "page": 2,
+        "text": "items. \u2022 Equipment remains the property of the employee. \u2022 Reimbursements must be submitted within 60 days of purchase.\n\n7. Security & Compliance\n\u2022 Employees must comply with all Information Security policies.\n\u2022 Public Wi-Fi use requires VPN connection.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S4",
+        "filename": "data_guidelines.pdf",
+        "page": 1,
+        "text": "Data Handling Guidelines\nReference: IT-MEMO-2019-07\nDate: July 2019\nContext\nThis memo is distributed to clarify acceptable data handling practices. It is intended as\ninterim guidance pending the release of a comprehensive security policy.\nLocal Storage Guidance\n\u2022 Confidential data may be stored on local encrypted laptops.\n\u2022 USB drives are permitted if hardware-encrypted.",
+        "authority": {
+          "title": "Data Handling Guidelines",
+          "document_type": "guideline",
+          "policy_id": "IT-MEMO-2019-07",
+          "version": null,
+          "effective_date": "2019-07-01",
+          "lifecycle_signal": "interim",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": true,
+          "relationship_target": "security policy",
+          "subject_terms": [
+            "data",
+            "handling",
+            "it-memo-2019-07"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S5",
+        "filename": "reimbursement_2025.pdf",
+        "page": 1,
+        "text": "Global Travel & Expense Reimbursement Policy\nPolicy ID: FIN-T&E-001\nVersion: 3.2\nEffective Date: 1 January 2025\nLast Reviewed: 15 December 2024\nOwner: Finance Operations\n\nExecutive Overview\nAt Apex Global, business travel plays a critical role in supporting client relationships,\ncross-regional collaboration, and strategic growth initiatives. This policy reflects Apex\nGlobal\u2019s commitment to balancing employee flexibility with prudent financial stewardship.\nAll employees are expected to exercise sound judgment and align travel decisions with the\nfirm\u2019s values of integrity, accountability, and operational excellence.\nThis document supersedes prior versions unless explicitly stated otherwise. Employees\nare responsible for familiarizing themselves with the contents of this policy prior to\nincurring any travel-related expenses.\n\n1. Purpose\nThis policy establishes guidelines for reimbursable travel and business expenses incurred\nby Apex Global employees to ensure fiscal responsibility, regulatory compliance, and fair\ntreatment across regions.\n\n2. Scope\nThis policy applies to all full-time employees, part-time employees, and long-term\ncontractors traveling on behalf of Apex Global.\n\n3. General Reimbursement Principles\n\u2022 Expenses must be business-related, reasonable, and necessary.\n\u2022 Itemized receipts are required for all expenses above USD 25.\n\u2022 Expenses must be submitted within 30 days of travel completion.\n\u2022 Expenses submitted after 60 days may be denied without exception.",
+        "authority": {
+          "title": "Global Travel & Expense Reimbursement Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "3.2",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "reimbursement",
+            "travel"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S6",
+        "filename": "workplace_policy.pdf",
+        "page": 1,
+        "text": "Workplace & Flexible Work Policy\nPolicy ID: HR-WRK-012\nVersion: 3.0\nEffective Date: 1 March 2025\nOwner: Human Resources\n\nPolicy Intent\nApex Global is committed to providing a productive, safe, and flexible workplace\nenvironment that supports both on-site and remote employees. This policy consolidates\nprior remote work, office attendance, and workplace support guidelines into a single\nframework intended to promote consistency, employee well-being, and operational\neffectiveness.\nThis policy replaces earlier standalone Remote & Hybrid Work policies unless otherwise\nstated.\n\n1. Scope\nThis policy applies to all regular full-time and part-time employees of Apex Global. Certain\nroles may be subject to additional workplace requirements due to regulatory, operational,\nor security considerations.\n\n2. Workplace Models\n\u2022 On-site: Employees work primarily from an Apex Global office location.\n\u2022 Hybrid: Employees split time between an Apex Global office and a remote location.\n\u2022 Remote: Employees work primarily from a remote location approved by their\nmanager and HR.\n\n3. Eligibility & Approval\n\u2022 Employees must have a minimum of 6 months of service to be eligible for hybrid or\nremote arrangements.\n\u2022 Participation is subject to manager approval and periodic review.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S7",
+        "filename": "Code of Business Conduct.pdf",
+        "page": 2,
+        "text": "4. Speak-Up Policy\nEmployees are encouraged to report concerns without fear of retaliation.",
+        "authority": {
+          "title": "Code of Business Conduct & Ethics",
+          "document_type": "policy",
+          "policy_id": "LEG-ETH-001",
+          "version": "5.1",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "business",
+            "conduct",
+            "ethics",
+            "leg-eth-001"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      }
+    ],
+    "expected_verdict": "revise"
+  },
+  {
+    "id": "saved_zurich_exception",
+    "question": "How much can I spend per night on lodging in Zurich? Does the USD 230 exception apply?",
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "The standard lodging reimbursement limit for Europe is EUR 220 per night, excluding taxes [S1]. For designated high-cost cities including Zurich, the Asia-Pacific cap may increase to USD 230, which requires pre-trip Finance approval [S1]. Because Zurich is in Europe rather than Asia-Pacific, it is unspecified whether the USD 230 exception applies to European cities, and you should consult Finance Operations for clarification."
+    },
+    "sources": [
+      {
+        "source_id": "S1",
+        "filename": "reimbursement_2025.pdf",
+        "page": 2,
+        "text": "4. Booking & Travel Approval\nApex Global seeks to standardize travel booking to improve duty-of-care, negotiate\npreferred rates, and ensure compliance with local regulations.\n\u2022 Domestic travel requires people-manager approval.\n\u2022 International travel requires Director-level approval.\n\u2022 All airfare and hotels must be booked through the Apex Global Travel Portal.\n\n5. Lodging Reimbursement Limits (Per Night, Excluding Taxes)\nRegion Standard Limit\nNorth America USD 250\nEurope EUR 220\nAsia-Pacific USD 180\nLatin America USD 160\n5.1 High-Cost City Exception\nFor designated high-cost cities (Tokyo, Singapore, Hong Kong, Zurich): - Asia-Pacific cap\nmay increase to USD 230 - Requires pre-trip Finance approval\n\n6. Meals & Incidentals (Daily Caps)\n\u2022 Breakfast: USD 20\n\u2022 Lunch: USD 25\n\u2022 Dinner: USD 45\n\u2022 Tips capped at 15%\nAlcohol is only reimbursable when part of a documented client meal.\n\n7. Non-Reimbursable Expenses\n\u2022 Personal travel upgrades\n\u2022 Mini-bar charges\n\u2022 Airline lounge memberships\n\u2022 Expenses incurred by family members",
+        "authority": {
+          "title": "Global Travel & Expense Reimbursement Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "3.2",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "reimbursement",
+            "travel"
+          ],
+          "authority_state": "governing_explicit_supersession",
+          "authority_reason": "Latest retrieved version of policy ID FIN-T&E-001; the document explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S2",
+        "filename": "travel_expenses_2022.pdf",
+        "page": 2,
+        "text": "4. Booking & Travel Approval\nApex Global seeks to standardize travel booking to improve duty-of-care, negotiate\npreferred rates, and ensure compliance with local regulations.\n\u2022 Domestic travel requires people-manager approval.\n\u2022 International travel requires Director-level approval.\n\u2022 Employees are encouraged, but not required, to use the Apex Global Travel Portal.\n\n5. Lodging Limits\nRegion Maximum Reimbursement\nNorth America USD 275\nEurope EUR 240\nAsia-Pacific USD 200\n5.1 High-Cost City Exception\nFor designated high-cost cities (Tokyo, Singapore, Hong Kong, Zurich): - Asia-Pacific cap\nmay increase to USD 230 - Requires pre-trip Finance approval\n\n6. Meals & Incidentals (Daily Caps)\n\u2022 Breakfast: USD 20\n\u2022 Lunch: USD 25\n\u2022 Dinner: USD 45\n\u2022 Tips capped at 15%\nAlcohol is only reimbursable when part of a documented client meal.\n\n7. Non-Reimbursable Expenses\n\u2022 Personal travel upgrades\n\u2022 Mini-bar charges\n\u2022 Airline lounge memberships\n\u2022 Expenses incurred by family members",
+        "authority": {
+          "title": "Global Travel & Expense Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "2.6",
+          "effective_date": "2022-06-01",
+          "lifecycle_signal": "historical_signal",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "travel"
+          ],
+          "authority_state": "historical_explicitly_superseded",
+          "authority_reason": "A later retrieved version of policy ID FIN-T&E-001 explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S3",
+        "filename": "Code of Business Conduct.pdf",
+        "page": 1,
+        "text": "Code of Business Conduct & Ethics\nPolicy ID: LEG-ETH-001\nVersion: 5.1\nEffective Date: 1 January 2025\nStatement from Leadership\nApex Global\u2019s reputation is built on ethical conduct and personal accountability.\n\nThis Code\noutlines the principles that guide our decisions and actions across all markets in which we\noperate.\n\n1.\n\nGifts & Entertainment\n\u2022 Gifts over USD 100 must be disclosed.\n\n\u2022 Gifts over USD 250 are prohibited.\n\n\u2022 Client-hosted dinners or entertainment may be accepted but must be reported in\nconjunction with Finance policies to ensure reimbursement limits and conflicts of\ninterest are observed.\n\nEmployees should consult both the Code of Business Conduct and the Travel & Expense\nPolicy when submitting claims for client-hosted meals or entertainment.\n\nScenarios\ninclude:\n\u2022 Client Dinner: If the client pays for a dinner exceeding the standard USD 45 limit,\nemployees must still record and disclose it.\n\n\u2022 Alcohol at Client Events: Alcohol can be consumed at client-hosted events but\nreimbursement requires disclosure.\n\n\u2022 Multiple Approvals: Some high-value client dinners may require both Finance and\nCompliance approval.\n\nEmployees must ensure that accepting such benefits does not create a conflict of interest,\nin line with corporate ethics standards.\n\n3.\n\nConflicts of Interest\nEmployees must disclose any personal or financial interests that could influence business\ndecisions.\n\nThis includes accepting meals, gifts, or reimbursements that may affect\ndecision-making.",
+        "authority": {
+          "title": "Code of Business Conduct & Ethics",
+          "document_type": "policy",
+          "policy_id": "LEG-ETH-001",
+          "version": "5.1",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "business",
+            "conduct",
+            "ethics",
+            "leg-eth-001"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S4",
+        "filename": "travel_expenses_2022.pdf",
+        "page": 1,
+        "text": "Global Travel & Expense Policy\nPolicy ID: FIN-T&E-001\nVersion: 2.6\nEffective Date: 1 June 2022\nOwner: Corporate Finance\nExecutive Overview\nAt Apex Global, business travel plays a critical role in supporting client relationships,\ncross-regional collaboration, and strategic growth initiatives. This policy reflects Apex\nGlobal\u2019s commitment to balancing employee flexibility with prudent financial stewardship.\nAll employees are expected to exercise sound judgment and align travel decisions with the\nfirm\u2019s values of integrity, accountability, and operational excellence.\nThis policy version was issued during a period of rapid international expansion and reflects\nhistorical cost benchmarks and approval practices. Employees are responsible for\nfamiliarizing themselves with the contents of this policy prior to incurring any travel-related\nexpenses. Employees should be aware that newer guidance may exist.\n\n1. Purpose\nThis policy establishes guidelines for reimbursable travel and business expenses incurred\nby Apex Global employees to ensure fiscal responsibility, regulatory compliance, and fair\ntreatment across regions.\n\n2. Scope\nThis policy applies to all full-time employees, part-time employees, and long-term\ncontractors traveling on behalf of Apex Global.\n\n3. General Reimbursement Principles\n\u2022 Expenses must be business-related, reasonable, and necessary.\n\u2022 Itemized receipts are required for all expenses above USD 25.\n\u2022 Expenses must be submitted within 90 days of travel completion.\n\u2022 Expenses submitted after 120 days may be denied without exception.",
+        "authority": {
+          "title": "Global Travel & Expense Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "2.6",
+          "effective_date": "2022-06-01",
+          "lifecycle_signal": "historical_signal",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "travel"
+          ],
+          "authority_state": "historical_explicitly_superseded",
+          "authority_reason": "A later retrieved version of policy ID FIN-T&E-001 explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S5",
+        "filename": "workplace_policy.pdf",
+        "page": 2,
+        "text": "company-issued laptop and required peripherals. \u2022 Employees may not use personal computers for Apex Global work, except as explicitly approved by IT.\n\n6. Work-from-Home (WFH) Equipment Reimbursement\nTo support effective remote and hybrid work, Apex Global offers reimbursement for certain\nhome office equipment.\n6.1 Eligible Expenses (One-Time or Every 3 Years)\n\u2022 Office chair: up to USD 500\n\u2022 External monitor(s): up to USD 400 total\n\u2022 Keyboard, mouse, docking station: up to USD 250\n6.2 Ongoing Allowance\n\u2022 Monthly home office stipend: USD 50 (internet and utilities)\n6.3 Reimbursement Conditions\n\u2022 Receipts are required for all reimbursed items.\n\u2022 Equipment remains the property of the employee.\n\u2022 Reimbursements must be submitted within 60 days of purchase.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S6",
+        "filename": "reimbursement_2025.pdf",
+        "page": 1,
+        "text": "Global Travel & Expense Reimbursement Policy\nPolicy ID: FIN-T&E-001\nVersion: 3.2\nEffective Date: 1 January 2025\nLast Reviewed: 15 December 2024\nOwner: Finance Operations\n\nExecutive Overview\nAt Apex Global, business travel plays a critical role in supporting client relationships,\ncross-regional collaboration, and strategic growth initiatives. This policy reflects Apex\nGlobal\u2019s commitment to balancing employee flexibility with prudent financial stewardship.\nAll employees are expected to exercise sound judgment and align travel decisions with the\nfirm\u2019s values of integrity, accountability, and operational excellence.\nThis document supersedes prior versions unless explicitly stated otherwise. Employees\nare responsible for familiarizing themselves with the contents of this policy prior to\nincurring any travel-related expenses.\n\n1. Purpose\nThis policy establishes guidelines for reimbursable travel and business expenses incurred\nby Apex Global employees to ensure fiscal responsibility, regulatory compliance, and fair\ntreatment across regions.\n\n2. Scope\nThis policy applies to all full-time employees, part-time employees, and long-term\ncontractors traveling on behalf of Apex Global.\n\n3. General Reimbursement Principles\n\u2022 Expenses must be business-related, reasonable, and necessary.\n\u2022 Itemized receipts are required for all expenses above USD 25.\n\u2022 Expenses must be submitted within 30 days of travel completion.\n\u2022 Expenses submitted after 60 days may be denied without exception.",
+        "authority": {
+          "title": "Global Travel & Expense Reimbursement Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "3.2",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "reimbursement",
+            "travel"
+          ],
+          "authority_state": "governing_explicit_supersession",
+          "authority_reason": "Latest retrieved version of policy ID FIN-T&E-001; the document explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S7",
+        "filename": "workplace_policy.pdf",
+        "page": 1,
+        "text": "Workplace & Flexible Work Policy\nPolicy ID: HR-WRK-012\nVersion: 3.0\nEffective Date: 1 March 2025\nOwner: Human Resources\n\nPolicy Intent\nApex Global is committed to providing a productive, safe, and flexible workplace\nenvironment that supports both on-site and remote employees. This policy consolidates\nprior remote work, office attendance, and workplace support guidelines into a single\nframework intended to promote consistency, employee well-being, and operational\neffectiveness.\nThis policy replaces earlier standalone Remote & Hybrid Work policies unless otherwise\nstated.\n\n1. Scope\nThis policy applies to all regular full-time and part-time employees of Apex Global. Certain\nroles may be subject to additional workplace requirements due to regulatory, operational,\nor security considerations.\n\n2. Workplace Models\n\u2022 On-site: Employees work primarily from an Apex Global office location.\n\u2022 Hybrid: Employees split time between an Apex Global office and a remote location.\n\u2022 Remote: Employees work primarily from a remote location approved by their\nmanager and HR.\n\n3. Eligibility & Approval\n\u2022 Employees must have a minimum of 6 months of service to be eligible for hybrid or\nremote arrangements.\n\u2022 Participation is subject to manager approval and periodic review.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      }
+    ],
+    "expected_verdict": "revise"
+  },
+  {
+    "id": "saved_confidential_local_storage_gap",
+    "question": "Can I store Confidential data locally?",
+    "candidate_answer": {
+      "status": "answered",
+      "answer": "Confidential data must be encrypted at rest and in transit [S2]. Whether Confidential data may be stored specifically on local laptops is unspecified in the governing Information Security & Data Classification Policy [S2], as historical interim guidance permitting local storage on encrypted laptops predates the governing policy [S1]. For clarification on local storage permissions, you may wish to consult the Information Security Office [S2]."
+    },
+    "sources": [
+      {
+        "source_id": "S1",
+        "filename": "data_guidelines.pdf",
+        "page": 1,
+        "text": "Data Handling Guidelines Reference: IT-MEMO-2019-07 Date: July 2019 Context This memo is distributed to clarify acceptable data handling practices. It is intended as interim guidance pending the release of a comprehensive security policy. Local Storage Guidance \u2022 Confidential data may be stored on local encrypted laptops. \u2022 USB drives are permitted if hardware-encrypted.",
+        "authority": {
+          "title": "Data Handling Guidelines",
+          "document_type": "guideline",
+          "policy_id": "IT-MEMO-2019-07",
+          "version": null,
+          "effective_date": "2019-07-01",
+          "lifecycle_signal": "interim",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": true,
+          "relationship_target": "security policy",
+          "subject_terms": [
+            "data",
+            "handling",
+            "it-memo-2019-07"
+          ],
+          "authority_state": "historical_interim",
+          "authority_reason": "The document says it is interim pending security policy, and the retrieved evidence includes Information Security & Data Classification Policy.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S2",
+        "filename": "information_security_data.pdf",
+        "page": 1,
+        "text": "Information Security & Data Classification Policy Policy ID: IT-SEC-004 Version: 4.1 Effective Date: 15 November 2024 Owner: Information Security Office Executive Summary Safeguarding information assets is fundamental to maintaining the trust of Apex Global\u2019s clients, regulators, and shareholders. This policy defines the minimum standards for handling, storing, and accessing information in alignment with global security frameworks and regulatory expectations. Failure to comply with this policy may expose Apex Global to financial, legal, and reputational risk. 1. Purpose To protect Apex Global information assets from unauthorized access, disclosure, alteration, or destruction. 2. Data Classification Levels \u2022 Public \u2022 Internal \u2022 Confidential \u2022 Restricted 3. Handling Requirements \u2022 Confidential and Restricted data must be encrypted at rest and in transit. \u2022 Restricted data may not be stored on local hard drives. \u2022 Use of personal cloud storage is prohibited. 4. Access Reviews Managers must review access rights quarterly.",
+        "authority": {
+          "title": "Information Security & Data Classification Policy",
+          "document_type": "policy",
+          "policy_id": "IT-SEC-004",
+          "version": "4.1",
+          "effective_date": "2024-11-15",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "classification",
+            "data",
+            "information",
+            "it-sec-004",
+            "security"
+          ],
+          "authority_state": "governing_lifecycle_successor",
+          "authority_reason": "This document matches the lifecycle target named by Data Handling Guidelines.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S3",
+        "filename": "workplace_policy.pdf",
+        "page": 2,
+        "text": "4. Location Requirements \u2022 Work must be performed from the employee\u2019s country of employment unless a temporary exception is approved by HR. \u2022 Employees are responsible for maintaining a suitable and safe work environment. 5. Equipment & Technology \u2022 Apex Global provides a standard company-issued laptop and required peripherals. \u2022 Employees may not use personal computers for Apex Global work, except as explicitly approved by IT.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S4",
+        "filename": "home_office_guidelines.pdf",
+        "page": 1,
+        "text": "Flexible Work & Home Office Guidelines Reference: HR-GUIDE-COVID-2021 Historical Note These guidelines are introduced as temporary measures during the COVID-19 pandemic to ensure business continuity and rapid transition to remote work. Its provisions are intended to be interim and may conflict with current Workplace policies. Work Location Employees may work remotely from any location globally with manager approval. Equipment & Reimbursements \u2022 Personal laptops may be used temporarily if security software is installed. \u2022 One-time home office reimbursement of up to USD 1,200 was permitted. \u2022 No monthly stipend is provided.",
+        "authority": {
+          "title": "Flexible Work & Home Office Guidelines",
+          "document_type": "guideline",
+          "policy_id": "HR-GUIDE-COVID-2021",
+          "version": null,
+          "effective_date": null,
+          "lifecycle_signal": "interim",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "home",
+            "hr-guide-covid-2021",
+            "office",
+            "work"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S5",
+        "filename": "workplace_policy.pdf",
+        "page": 1,
+        "text": "and part-time employees of Apex Global. Certain roles may be subject to additional workplace requirements due to regulatory, operational, or security considerations. 2. Workplace Models \u2022 On-site: Employees work primarily from an Apex Global office location. \u2022 Hybrid: Employees split time between an Apex Global office and a remote location. \u2022 Remote: Employees work primarily from a remote location approved by their manager and HR. 3. Eligibility & Approval \u2022 Employees must have a minimum of 6 months of service to be eligible for hybrid or remote arrangements. \u2022 Participation is subject to manager approval and periodic review.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      }
+    ],
+    "expected_verdict": "pass"
+  },
+  {
+    "id": "saved_unsupported_parental_leave",
+    "question": "How many weeks of paid parental leave does Apex provide?",
+    "candidate_answer": {
+      "status": "insufficient_context",
+      "answer": "The provided policy documents do not contain information regarding paid parental leave."
+    },
+    "sources": [
+      {
+        "source_id": "S1",
+        "filename": "workplace_policy.pdf",
+        "page": 2,
+        "text": "4. Location Requirements \u2022 Work must be performed from the employee\u2019s country of employment unless a temporary exception is approved by HR. \u2022 Employees are responsible for maintaining a suitable and safe work environment. 5. Equipment & Technology \u2022 Apex Global provides a standard company-issued laptop and required peripherals. \u2022 Employees may not use personal computers for Apex Global work, except as explicitly approved by IT. 6. Work-from-Home (WFH) Equipment Reimbursement To support effective remote and hybrid work, Apex Global offers reimbursement for certain home office equipment. 6.1 Eligible Expenses (One-Time or Every 3 Years) \u2022 Office chair: up to USD 500 \u2022 External monitor(s): up to USD 400 total \u2022 Keyboard, mouse, docking station: up to USD 250 6.2 Ongoing Allowance \u2022 Monthly home office stipend: USD 50 (internet and utilities) 6.3 Reimbursement Conditions \u2022 Receipts are required for all reimbursed items. \u2022 Equipment remains the property of the employee. \u2022 Reimbursements must be submitted within 60 days of purchase. 7. Security & Compliance \u2022 Employees must comply with all Information Security policies. \u2022 Public Wi-Fi use requires VPN connection.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S2",
+        "filename": "workplace_policy.pdf",
+        "page": 1,
+        "text": "Workplace & Flexible Work Policy Policy ID: HR-WRK-012 Version: 3.0 Effective Date: 1 March 2025 Owner: Human Resources Policy Intent Apex Global is committed to providing a productive, safe, and flexible workplace environment that supports both on-site and remote employees. This policy consolidates prior remote work, office attendance, and workplace support guidelines into a single framework intended to promote consistency, employee well-being, and operational effectiveness. This policy replaces earlier standalone Remote & Hybrid Work policies unless otherwise stated. 1. Scope This policy applies to all regular full-time and part-time employees of Apex Global. Certain roles may be subject to additional workplace requirements due to regulatory, operational, or security considerations. 2. Workplace Models \u2022 On-site: Employees work primarily from an Apex Global office location. \u2022 Hybrid: Employees split time between an Apex Global office and a remote location. \u2022 Remote: Employees work primarily from a remote location approved by their manager and HR. 3. Eligibility & Approval \u2022 Employees must have a minimum of 6 months of service to be eligible for hybrid or remote arrangements. \u2022 Participation is subject to manager approval and periodic review.",
+        "authority": {
+          "title": "Workplace & Flexible Work Policy",
+          "document_type": "policy",
+          "policy_id": "HR-WRK-012",
+          "version": "3.0",
+          "effective_date": "2025-03-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "flexible",
+            "hr-wrk-012",
+            "work",
+            "workplace"
+          ],
+          "authority_state": "unspecified",
+          "authority_reason": null,
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S3",
+        "filename": "travel_expenses_2022.pdf",
+        "page": 1,
+        "text": "Global Travel & Expense Policy Policy ID: FIN-T&E-001 Version: 2.6 Effective Date: 1 June 2022 Owner: Corporate Finance Executive Overview At Apex Global, business travel plays a critical role in supporting client relationships, cross-regional collaboration, and strategic growth initiatives. This policy reflects Apex Global\u2019s commitment to balancing employee flexibility with prudent financial stewardship. All employees are expected to exercise sound judgment and align travel decisions with the firm\u2019s values of integrity, accountability, and operational excellence. This policy version was issued during a period of rapid international expansion and reflects historical cost benchmarks and approval practices. Employees are responsible for familiarizing themselves with the contents of this policy prior to incurring any travel-related expenses. Employees should be aware that newer guidance may exist. 1. Purpose This policy establishes guidelines for reimbursable travel and business expenses incurred by Apex Global employees to ensure fiscal responsibility, regulatory compliance, and fair treatment across regions. 2. Scope This policy applies to all full-time employees, part-time employees, and long-term contractors traveling on behalf of Apex Global. 3. General Reimbursement Principles \u2022 Expenses must be business-related, reasonable, and necessary. \u2022 Itemized receipts are required for all expenses above USD 25. \u2022 Expenses must be submitted within 90 days of travel completion. \u2022 Expenses submitted after 120 days may be denied without exception.",
+        "authority": {
+          "title": "Global Travel & Expense Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "2.6",
+          "effective_date": "2022-06-01",
+          "lifecycle_signal": "historical_signal",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "travel"
+          ],
+          "authority_state": "historical_explicitly_superseded",
+          "authority_reason": "A later retrieved version of policy ID FIN-T&E-001 explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S4",
+        "filename": "reimbursement_2025.pdf",
+        "page": 1,
+        "text": "explicitly stated otherwise. Employees are responsible for familiarizing themselves with the contents of this policy prior to incurring any travel-related expenses. 1. Purpose This policy establishes guidelines for reimbursable travel and business expenses incurred by Apex Global employees to ensure fiscal responsibility, regulatory compliance, and fair treatment across regions. 2. Scope This policy applies to all full-time employees, part-time employees, and long-term contractors traveling on behalf of Apex Global. 3. General Reimbursement Principles \u2022 Expenses must be business-related, reasonable, and necessary. \u2022 Itemized receipts are required for all expenses above USD 25. \u2022 Expenses must be submitted within 30 days of travel completion. \u2022 Expenses submitted after 60 days may be denied without exception.",
+        "authority": {
+          "title": "Global Travel & Expense Reimbursement Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "3.2",
+          "effective_date": "2025-01-01",
+          "lifecycle_signal": "unspecified",
+          "supersedes_prior_versions": true,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "reimbursement",
+            "travel"
+          ],
+          "authority_state": "governing_explicit_supersession",
+          "authority_reason": "Latest retrieved version of policy ID FIN-T&E-001; the document explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      },
+      {
+        "source_id": "S5",
+        "filename": "travel_expenses_2022.pdf",
+        "page": 2,
+        "text": "4. Booking & Travel Approval Apex Global seeks to standardize travel booking to improve duty-of-care, negotiate preferred rates, and ensure compliance with local regulations. \u2022 Domestic travel requires people-manager approval. \u2022 International travel requires Director-level approval. \u2022 Employees are encouraged, but not required, to use the Apex Global Travel Portal. 5. Lodging Limits Region Maximum Reimbursement North America USD 275 Europe EUR 240 Asia-Pacific USD 200 5.1 High-Cost City Exception For designated high-cost cities (Tokyo, Singapore, Hong Kong, Zurich): - Asia-Pacific cap may increase to USD 230 - Requires pre-trip Finance approval",
+        "authority": {
+          "title": "Global Travel & Expense Policy",
+          "document_type": "policy",
+          "policy_id": "FIN-T&E-001",
+          "version": "2.6",
+          "effective_date": "2022-06-01",
+          "lifecycle_signal": "historical_signal",
+          "supersedes_prior_versions": false,
+          "pending_comprehensive_policy": false,
+          "relationship_target": null,
+          "subject_terms": [
+            "e-001",
+            "expense",
+            "fin-t",
+            "global",
+            "travel"
+          ],
+          "authority_state": "historical_explicitly_superseded",
+          "authority_reason": "A later retrieved version of policy ID FIN-T&E-001 explicitly supersedes prior versions.",
+          "metadata_version": "authority-v4"
+        }
+      }
+    ],
+    "expected_verdict": "pass"
+  }
+]

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Prepare the local Python environment and optional API key, then launch the app.
 
 set -euo pipefail
 

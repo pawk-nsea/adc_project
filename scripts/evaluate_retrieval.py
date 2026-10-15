@@ -1,4 +1,4 @@
-"""Evaluate real semantic retrieval against labeled source/page evidence."""
+"""Evaluate real local retrieval against expected PDF/page hits, without LLM calls."""
 
 import json
 from collections import Counter
@@ -19,6 +19,11 @@ CONVERSATION_ID = "retrieval-evaluation"
 
 
 def main() -> None:
+    """Index eight samples in temporary storage and fail if expected pages are missing.
+
+    Page inclusion does not prove every relevant passage on that page was retrieved.
+    """
+
     cases = json.loads(CASE_PATH.read_text(encoding="utf-8"))
     policy_paths = sorted(POLICY_DIRECTORY.glob("*.pdf"))
     if len(policy_paths) != 8:

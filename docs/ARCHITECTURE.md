@@ -1,94 +1,69 @@
-# Conceptual Architecture
+# Architecture
 
-> This document preserves the prototype-to-enterprise architecture discussion.
-> For the current implemented local codebase and request flows, use
-> `docs/SOLUTION_BLUEPRINT.md`.
+This describes the implemented local prototype. Enterprise components below are proposals. The current reviewer entry point is [README.md](../README.md); measured outcomes are in [EVALUATION.md](EVALUATION.md).
 
-This document separates the implemented local prototype from later proposed enterprise components. See `docs/DECISIONS.md` for choices and `docs/REQUIREMENTS.md` for tracked scope.
+## Components
 
-## Local prototype information flow
+| Location | Responsibility |
+| --- | --- |
+| `app/api/` | HTTP validation, error mapping and response contracts |
+| `app/services/` | Ingestion, retrieval, conversation context, authority and answer checks |
+| `app/providers/` | Embedding, vector-store and Gemini interfaces/adapters |
+| `app/models.py`, `app/database.py` | Relational records and sessions |
+| `app/prompts/` | Generation and verification instructions |
+| `app/web/` | Browser workspace, saved chats, uploads and PDF citations |
+| `scripts/`, `evaluation/` | Reproducible evaluation runners and question fixtures |
 
-### Ingestion
+Provider protocols allow replacement of a model/store and deterministic test fakes without changing the API. The current application uses FastAPI, SQLite, persistent Chroma, local MiniLM, Gemini Flash drafting and verification. No separate frontend server or JavaScript build is required.
 
-The ingestion steps below are implemented in Stage 2:
+## Upload
 
-1. A caller sends a PDF and required `conversation_id` to `POST /upload`.
-2. The API validates the request and retrieves the conversation when it exists or creates it when the supplied ID is new.
-3. `pypdf` extracts text page by page; unreadable, encrypted, and text-empty PDFs are rejected.
-4. A deterministic chunker keeps page boundaries, targets 180 model word pieces, caps chunks at 220, and uses up to 30 tokens of overlap.
-5. `all-MiniLM-L6-v2` runs locally through CPU ONNX Runtime and creates normalized 384-dimensional vectors.
-6. Persistent Chroma stores vectors, exact chunk text, and scalar provenance. SQLite records conversations and document metadata, including filename, upload time, hash, page/chunk counts, and processing status.
-7. The endpoint confirms success only when the prototype’s documented indexing completion condition has been met.
+`POST /upload` accepts a caller-supplied conversation ID and PDF. It validates size/signature, creates or reuses the conversation, and rejects duplicate active content in that workspace. pypdf extracts readable text per page without OCR or layout reconstruction; textless pages are skipped. The chunker targets 180 model tokens, caps at 220 and aims for 30 tokens of whole-word overlap without crossing page boundaries. Overlap is approximate and is dropped if the next unit would exceed the maximum.
 
-### Chat (implemented; live provider verification pending)
+Local `all-MiniLM-L6-v2` produces 384-dimensional CPU embeddings. Chroma stores vectors, text and provenance; SQLite stores metadata, authority signals and the original PDF for citation viewing. Success requires vector-count confirmation and relational finalization. Failure retains a failed record and attempts vector cleanup. The stores do not share an atomic transaction.
 
-1. A caller sends a `conversation_id` and message to `POST /chat`.
-2. Relational storage provides the five latest individual user/assistant messages, restored to chronological order. The current question remains separate.
-3. The retrieval service embeds the current question and runs cosine search filtered by conversation and embedding model. It considers up to 15 candidates and returns the five strongest distinct document pages.
-4. Prompt construction keeps four explicit inputs: the system instruction, recent history, retrieved context, and current user question. Retrieved documents are treated as untrusted data, not higher-priority instructions.
-5. Gemini Flash receives the bounded prompt and returns a schema-validated answer, status, and retrieved source IDs. The prompt requires context-only answers, abstention, and explicit conflict handling.
-6. Citation validation rejects unknown, duplicate, mismatched, or model-invented public markers. The application maps accepted source IDs to numbered PDF filename and one-based page citations.
-7. Relational storage atomically persists the user query and validated AI response in order. The API returns JSON containing `conversation_id`, `status`, `answer`, and `citations`.
+## Chat
 
-### Proposed logical components
+```mermaid
+flowchart TD
+    Q[Question and latest five messages] --> R[Resolve references; retrieve workspace evidence]
+    R --> A[Resolve source authority; build generation context]
+    A --> G[Generate status and cited answer]
+    G --> P[Validate schema and citation references]
+    P --> V[Compare candidate with question and evidence]
+    V --> D{No material issues and matching status?}
+    D -->|Yes| S[Persist user and assistant together; return citations]
+    D -->|No; budget remains| C[Correct draft using existing evidence and feedback]
+    C --> G
+    D -->|No; budget exhausted| E[Controlled error; no partial persistence]
+```
 
-| Concern | Proposed responsibility | Unresolved choice |
-|---|---|---|
-| HTTP/API | Validate requests, coordinate use cases, return stable JSON/errors | FastAPI upload and chat implemented |
-| PDF parsing | Extract readable text and page metadata | `pypdf` implemented; OCR excluded |
-| Chunking | Produce meaningful, traceable retrieval units | Token-aware page-local baseline implemented and retrieval-evaluated |
-| Embeddings | Convert chunks/queries into compatible vectors | Local ONNX MiniLM document and query embedding implemented |
-| Vector retrieval | Index/search chunks and return scores/identifiers | Persistent Chroma cosine search, filtering, and page diversification implemented |
-| Relational persistence | Store conversations, document metadata, and interactions | SQLAlchemy/SQLite implemented; migrations deferred |
-| Prompt/model boundary | Assemble bounded inputs and invoke chat behavior | Explicit builder plus Gemini provider; real call pending safe key |
-| Citation assembly | Connect answer evidence to source PDFs | Validated inline markers plus structured filename/page citations implemented |
+Retrieval combines conversation/model-filtered cosine search with local keyword ranking and weighted rank fusion. Semantic ranking remains primary. Bounded enrichment fetches selected pages, document starts and immediate neighbours of the two strongest page hits; overlapping chunks are consolidated per PDF page. Enrichment prioritizes all selected pages before headers and neighbours. It considers the first six chunks per requested page within a 12-companion budget (24 for expanded questions), then may append document starts. Pages beyond these bounds can remain partial; no full-document coverage is implied.
 
-## Future enterprise platform: proposed direction
+Authority metadata records title/type, policy or reference ID, version, effective date and lifecycle signals. Geography, employee group, owner and approval are not structured fields; models interpret scope from policy text. Same-ID supersession requires sortable dates and explicit replacement wording. Interim succession uses a shared title/ID-word heuristic with date ordering, so it can match too broadly. Resolution covers retrieved documents rather than the entire workspace, and does not check dates against today. A newer date alone does not establish replacement. Prompts tell models to treat documents, history and review feedback as untrusted data rather than instructions or independent policy authority.
 
-The enterprise target is intentionally separate from the local walking skeleton. Live upload may be omitted, but governed integration with internal document systems is expected.
+Generation returns `{status, answer}` with internal source markers. Python validates structure, known source IDs, numeric-marker integrity and grounded/abstention citation constraints. It constructs public citations deduplicated by document/page. Citation existence is deterministic; semantic support is model-assessed.
 
-### Ingestion plane (slow, asynchronous)
+The verifier receives the actual current question, prior user messages separately for reference/fact resolution, the candidate and the same bounded source text/authority metadata, including uncited passages. It gets no assistant history or additional retrieval. Follow-up heuristics affect retrieval hints only, never redefine the current task. Its model response has `{evidence_answer, answer_status, issues}`: a direct comparison, independent status and material defects. Python derives `verdict` from `issues` and checks status agreement; it does not verify the audit reasoning or agreement between audit prose and issues. Both calls use `gemini-3.8-flash` with LOW reasoning and separate instructions. The [quality comparison](QUALITY_IMPROVEMENT_RESULTS.md) records the tested configuration and remaining risks.
 
-- Source connectors discover approved files in enterprise repositories such as SharePoint and managed drives.
-- Change events or scheduled scans place ingestion jobs on a durable queue. This prevents parsing, validation, chunking, embedding, and indexing from blocking chat traffic.
-- Independent workers process jobs with retries, idempotency, dead-letter handling, malware/content validation, and observable status.
-- A document catalog records source system, owner, access policy, effective/version dates, checksum, ingestion version, and supersession state. Data-quality checks flag duplicates, missing ownership, stale documents, and contradictory authoritative content for human stewardship.
-- A versioned index is built and validated before promotion, allowing rollback and avoiding partially updated serving state.
+Normal policy responses use generation plus verification. Two attempt cycles allow one fresh redraft or a malformed-audit recheck against the same draft. Redrafting retains the original question/evidence and defect feedback, without appending the rejected answer as an assistant turn. At most four logical calls are made; transient provider unavailability can retry a request up to three physical attempts. Failed/unverified turns are not persisted. Successful turns persist atomically in SQLite.
 
-### Serving plane (fast, synchronous)
+Relevance-feedback acknowledgments and empty-retrieval replies bypass both model calls and are saved locally. Upload and chat service work runs synchronously inside async routes; provider timeouts are per request, not whole-chat deadlines. This path has not been load-tested for enterprise concurrency.
 
-- Enterprise identity and authorization determine the documents a user may retrieve; filtering must happen before protected content reaches the model.
-- A chat service obtains bounded history, retrieves authorized evidence, optionally reranks it, constructs the prompt, invokes the model, checks the grounded response, and returns citations or an explicit abstention.
-- Caching may reduce latency for safe, stable layers such as query embeddings, authorized retrieval results, and approved responses. Cache keys must include relevant user/access scope and data/index version; invalidation must follow document/index changes. Exact cache targets require risk and latency evidence.
-- Rate limiting, timeouts, graceful fallbacks, trace correlation, and streaming are candidates for meeting an eventual latency objective.
+## Status and history
 
-### Control, evaluation, and governance plane
+- `answered`: applicable policy facts answer at least part of the question, with citations and explicit remaining gaps.
+- `insufficient_context`: no applicable rule supports the topic; explain the absence without citations.
+- `conflicting_sources`: unresolved applicable contradictions or material ambiguity prevent a definite decision.
 
-- Code, prompts, models, embedding configuration, data snapshots, and indexes receive separate versions linked in a deployment record.
-- CI/CD runs deterministic unit/integration checks plus versioned retrieval and answer evaluations. Candidate results are compared with a baseline and promoted only through quality, security, cost, and latency gates.
-- Production telemetry monitors service health, retrieval quality proxies, groundedness/citation behavior, abstention, feedback, query drift, data freshness, and policy violations with privacy-aware retention and access.
-- Human workflows own document conflicts, flagged responses, feedback triage, incident response, evaluation-set updates, and release approval.
-- Adoption combines phased rollout, role-specific training, examples that contrast keyword search with semantic questions, citation checking, limitation/feedback education, office hours, champions, and measurable usage/trust outcomes.
+A fresh browser workspace does not erase server-side saved chats. Opening a saved entry restores its messages and sources; confirmed deletion removes relational records and document vectors. PDF access checks membership in the requested workspace. There is no authentication, so this is a single-user local boundary rather than a multi-user authorization model.
 
-## Assumptions and unresolved choices
+## Extension boundaries and trade-offs
 
-### Explicitly supported by the case
+Keep retrieval/model changes measurable through the existing provider/service boundaries. Add no policy-specific production answers. The same-model generation/verifier pair can share errors, bounded context cannot prove a complete policy review, and an independent verifier cannot inspect omitted evidence. See the preserved [decision log](DECISIONS.md) for accepted and superseded choices.
 
-- The prototype uses Python.
-- The enterprise solution may omit live upload.
-- Enterprise integration with internal document stores is expected.
+## Enterprise direction — not implemented
 
-### Prototype assumptions
+A production platform would separate queued ingestion workers from serving, integrate approved document repositories, and enforce identity/document permissions before retrieval. It needs versioned indexes, evaluation/release gates, privacy-aware telemetry, policy-owner remediation, retention, feedback and incident workflows. Cache keys must include authorization and data versions.
 
-- The prototype can prioritize a single-process/local deployment and a synchronous upload flow for clarity.
-- Enterprise ingestion and serving should use separate scaling/failure domains.
-- Public citations include filename and one-based page; internal retrieval retains chunk provenance.
-
-### Material choices still open
-
-- Live Gemini behavior, cost, latency, and organizational approval to send the bounded prompt to a hosted provider. Free-tier data-use terms are unsuitable for confidential data without explicit approval.
-- Retrieval/reranking and grounded-answer quality thresholds beyond the Stage 3 baseline.
-- Prototype security boundary, model data-sharing constraints, and non-functional thresholds.
-- Enterprise cloud provider/services, regions/residency, identity system, SLOs, scale, budget, compliance, and operational ownership.
-
-These must be decided in the relevant stage and logged before dependent implementation or presentation work.
+Cloud services, operational targets and rollout/training for 10,000 employees need explicit decisions and a stakeholder presentation. These are separate ADC strategy deliverables; no enterprise deployment or readiness is claimed here.

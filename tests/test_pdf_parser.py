@@ -1,3 +1,5 @@
+"""Check supplied-PDF extraction and rejection of malformed, encrypted or textless input."""
+
 from pathlib import Path
 from io import BytesIO
 

@@ -1,4 +1,4 @@
-"""Synchronous PDF ingestion orchestration."""
+"""Validate and index PDF uploads, coordinating relational state and vector cleanup."""
 
 from dataclasses import dataclass
 from datetime import datetime
@@ -13,9 +13,12 @@ from app.providers.embeddings import EmbeddingProvider
 from app.providers.vector_store import VectorStore
 from app.services.chunker import create_chunks
 from app.services.pdf_parser import PdfParseError, parse_pdf
+from app.services.policy_metadata import extract_policy_authority
 
 
 class InvalidPdfError(ValueError):
+    """Invalid PDF input with the HTTP status used by the upload endpoint."""
+
     def __init__(self, message: str, status_code: int = 422) -> None:
         super().__init__(message)
         self.status_code = status_code
@@ -44,6 +47,8 @@ class IngestionResult:
 
 
 class IngestionService:
+    """Complete extraction, local embedding and storage before confirming an upload."""
+
     def __init__(
         self,
         *,
@@ -58,7 +63,12 @@ class IngestionService:
         self._settings = settings
 
     def ingest(self, *, conversation_id: str, filename: str, content: bytes) -> IngestionResult:
-        """Index one validated PDF, cleaning up vectors after partial failure."""
+        """Create/reuse a workspace, index PDF bytes and return saved upload metadata.
+
+        Reject oversized, non-PDF or duplicate active content within that workspace.
+        Success retains the original PDF; processing failures retain a failed record
+        and attempt vector cleanup. SQLite and Chroma have no shared transaction.
+        """
 
         if len(content) > self._settings.max_upload_bytes:
             raise UploadTooLargeError("The uploaded PDF is too large.")
@@ -93,10 +103,12 @@ class IngestionService:
                 status=DocumentStatus.PROCESSING,
             )
             session.add(document)
+            # Persist processing state before indexing so failures remain inspectable.
             session.commit()
 
             try:
                 parsed_pdf = parse_pdf(content)
+                authority_metadata = extract_policy_authority(parsed_pdf.pages)
                 chunks = create_chunks(
                     parsed_pdf.pages,
                     document_id=document.id,
@@ -121,6 +133,8 @@ class IngestionService:
 
                 document.page_count = parsed_pdf.page_count
                 document.chunk_count = len(chunks)
+                document.content_bytes = content
+                document.authority_metadata_json = authority_metadata.to_dict()
                 document.status = DocumentStatus.INDEXED
                 session.commit()
                 return IngestionResult(
@@ -134,6 +148,7 @@ class IngestionService:
             except Exception as exc:
                 session.rollback()
                 cleanup_error: Exception | None = None
+                # Rolling back SQL does not undo Chroma writes; compensate explicitly.
                 try:
                     self._vectors.delete_document(document.id)
                 except Exception as cleanup_exc:

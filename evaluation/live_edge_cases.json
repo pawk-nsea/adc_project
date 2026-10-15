@@ -1,0 +1,65 @@
+[
+  {
+    "id": "mixed_current_historical_storage",
+    "question": "What did the 2019 memo allow for Confidential data on laptops, and does the current security policy explicitly approve that same storage location?",
+    "evidence": {"data_guidelines.pdf": ["Confidential data may be stored"], "information_security_data.pdf": ["Confidential and Restricted data must be encrypted"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["2019|historical|interim", "encrypt", "does not|not explicitly|not specify|not specified"],
+    "citation_files": ["data_guidelines.pdf", "information_security_data.pdf"],
+    "rubric": "Describe the historical encrypted-laptop allowance, then separately identify that the current policy requires encryption but does not explicitly authorize local Confidential storage. Do not treat the mixed historical question as a blanket license to revive current permission."
+  },
+  {
+    "id": "timing_three_boundaries",
+    "question": "Compare current travel expense submissions exactly 30, 60 and 61 days after returning. Which are late, and when does the policy explicitly say they may be denied?",
+    "evidence": {"reimbursement_2025.pdf": ["within 30 days", "after 60 days may be denied"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["30", "60", "61", "late|deadline", "may be denied|possible denial"],
+    "citation_files": ["reimbursement_2025.pdf"],
+    "rubric": "Day 30 meets the deadline; days 60 and 61 are late. The after-60 possible-denial clause applies to day 61, not exactly day 60. Do not guarantee payment or invent automatic denial for any interval."
+  },
+  {
+    "id": "sponsor_pays_part_employee_pays_part",
+    "question": "A vendor paid for my dinner, but I personally paid USD 20 for lunch on the same business trip. Which expense can I claim, and what separate obligations apply to the vendor-sponsored dinner?",
+    "evidence": {"reimbursement_2025.pdf": ["Lunch: USD 25", "Expenses must be business-related"], "vendor_procurement_policy.pdf": ["accepting vendor-sponsored meals", "sponsorship acknowledgements"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["lunch", "20", "vendor", "record|disclos|acknowledg"],
+    "citation_files": ["reimbursement_2025.pdf", "vendor_procurement_policy.pdf"],
+    "rubric": "The employee incurred lunch, within the USD 25 cap, and may submit that expense subject to normal rules. The vendor-paid dinner is not an employee-paid expense to reimburse; distinguish its separate ethics, documentation and conditional approvals. Do not borrow gift or procurement amounts as a dinner threshold."
+  },
+  {
+    "id": "approved_cloud_followup",
+    "history": [
+      {"role": "user", "content": "Does the current security policy name an approved company cloud platform for Confidential data?"},
+      {"role": "assistant", "content": "It does not name an approved company platform."}
+    ],
+    "question": "So can I use my personal cloud instead if I encrypt it?",
+    "evidence": {"information_security_data.pdf": ["Use of personal cloud storage is prohibited", "Confidential and Restricted data must be encrypted"]},
+    "statuses": ["answered"],
+    "answer_patterns": ["No|prohibit|cannot|can't", "personal", "encrypt"],
+    "citation_files": ["information_security_data.pdf"],
+    "rubric": "Reject personal cloud storage under the explicit prohibition; encryption and absence of a named company platform do not waive it. Preserve the follow-up intent for both readers and suggest the documented Information Security owner without inventing a platform."
+  },
+  {
+    "id": "standalone_policy_question_after_unrelated_turn",
+    "history": [
+      {"role":"user", "content":"Will my travel claim definitely be paid if I submit it 45 days after returning?"},
+      {"role":"assistant", "content":"Payment is not guaranteed by the uploaded policies."}
+    ],
+    "question":"Which policies and approvals apply to a vendor-sponsored dinner? Compare procurement, travel reimbursement and ethics requirements.",
+    "evidence":{"vendor_procurement_policy.pdf":["accepting vendor-sponsored meals", "Finance", "Procurement"], "Code of Business Conduct.pdf":["record and disclose"]},
+    "statuses":["answered"],
+    "answer_patterns":["Compliance", "Procurement", "Financ", "record|disclos"],
+    "forbidden_patterns":["45 days", "60 days", "30 days"],
+    "citation_files":["vendor_procurement_policy.pdf", "Code of Business Conduct.pdf"],
+    "rubric":"Treat this as a complete new question. Cover the sponsored-dinner rules and distinguish payment/reimbursement; do not answer the preceding late-claim question."
+  },
+  {
+    "id":"assistant_request_is_not_permission_question",
+    "question":"Can you summarize the current Europe lodging limit and whether taxes are included?",
+    "evidence":{"reimbursement_2025.pdf":["Europe", "EUR 220", "Excluding Taxes"]},
+    "statuses":["answered"],
+    "answer_patterns":["220", "EUR", "per night|nightly", "exclud.*tax|before tax"],
+    "citation_files":["reimbursement_2025.pdf"],
+    "rubric":"Answer EUR 220 per night excluding taxes. This is a request for a summary, not a question about permission to summarize or an unsupported action."
+  }
+]

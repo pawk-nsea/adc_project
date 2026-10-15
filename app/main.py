@@ -1,15 +1,20 @@
-"""FastAPI application construction."""
+"""Wire API routes, storage and providers into the FastAPI application lifecycle."""
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api import chat, conversations, health, upload, web
+from app.api import chat, conversations, documents, health, upload, web
 from app.config import Settings, get_settings
 from app.database import Database
 from app.providers.embeddings import EmbeddingProvider, OnnxMiniLmEmbeddingProvider
-from app.providers.llm import ChatProvider, GeminiChatProvider
+from app.providers.llm import (
+    ChatProvider,
+    ClaimVerifier,
+    GeminiChatProvider,
+    GeminiClaimVerifier,
+)
 from app.providers.vector_store import ChromaVectorStore, VectorStore
 from app.services.chat import ChatService
 from app.services.conversations import ConversationService
@@ -22,8 +27,12 @@ def create_app(
     embedding_provider: EmbeddingProvider | None = None,
     vector_store: VectorStore | None = None,
     chat_provider: ChatProvider | None = None,
+    claim_verifier: ClaimVerifier | None = None,
 ) -> FastAPI:
-    """Create an independently configurable application instance."""
+    """Build the app; optional providers let tests replace external services.
+
+    Startup creates storage and services; shutdown closes the database engine.
+    """
 
     resolved_settings = settings or get_settings()
     database = Database(resolved_settings.database_url)
@@ -50,6 +59,18 @@ def create_app(
             temperature=resolved_settings.chat_temperature,
             max_tokens=resolved_settings.chat_max_output_tokens,
             timeout_seconds=resolved_settings.chat_timeout_seconds,
+            thinking_level=resolved_settings.chat_thinking_level,
+        )
+        resolved_claim_verifier = claim_verifier or GeminiClaimVerifier(
+            api_key=(
+                resolved_settings.gemini_api_key.get_secret_value()
+                if resolved_settings.gemini_api_key
+                else None
+            ),
+            model=resolved_settings.verification_model,
+            max_tokens=resolved_settings.verification_max_output_tokens,
+            timeout_seconds=resolved_settings.chat_timeout_seconds,
+            thinking_level=resolved_settings.verification_thinking_level,
         )
         application.state.database = database
         application.state.settings = resolved_settings
@@ -68,6 +89,7 @@ def create_app(
             database=database,
             retrieval_service=application.state.retrieval_service,
             chat_provider=resolved_chat_provider,
+            claim_verifier=resolved_claim_verifier,
         )
         application.state.conversation_service = ConversationService(
             database,
@@ -86,6 +108,7 @@ def create_app(
     application.include_router(upload.router)
     application.include_router(chat.router)
     application.include_router(conversations.router)
+    application.include_router(documents.router)
     application.include_router(web.router)
     return application
 

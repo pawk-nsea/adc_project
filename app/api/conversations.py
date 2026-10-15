@@ -40,7 +40,11 @@ async def list_conversations(request: Request) -> ConversationListResponse:
     )
 
 
-@router.get("/{conversation_id:path}", response_model=ConversationResponse)
+@router.get(
+    "/{conversation_id:path}",
+    response_model=ConversationResponse,
+    response_model_exclude_none=True,
+)
 async def get_conversation(
     conversation_id: Annotated[str, Path(min_length=1, max_length=128)],
     request: Request,
@@ -65,6 +69,7 @@ async def get_conversation(
                 status=document.status,
                 chunks_indexed=document.chunks_indexed,
                 uploaded_at=document.uploaded_at,
+                source_view_available=document.source_view_available,
             )
             for document in summary.documents
         ],

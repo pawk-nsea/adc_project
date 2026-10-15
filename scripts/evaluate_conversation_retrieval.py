@@ -1,4 +1,4 @@
-"""Check follow-up retrieval against all supplied policy PDFs."""
+"""Evaluate follow-up retrieval with synthetic history and real local policy embeddings."""
 
 import json
 from pathlib import Path
@@ -8,7 +8,12 @@ from app.config import Settings
 from app.database import Database
 from app.providers.embeddings import OnnxMiniLmEmbeddingProvider
 from app.providers.vector_store import ChromaVectorStore
-from app.services.chat import build_retrieval_question
+from app.services.conversation_context import (
+    EXPANDED_CONTEXT_TOP_K,
+    build_retrieval_question,
+    needs_expanded_context,
+    resolve_question_context,
+)
 from app.services.ingestion import IngestionService
 from app.services.prompt_builder import HistoryMessage
 from app.services.retrieval import RetrievalService
@@ -20,6 +25,11 @@ CONVERSATION_ID = "conversation-retrieval-evaluation"
 
 
 def main() -> None:
+    """Check expected PDF/pages per turn in temporary storage, without hosted model calls.
+
+    Synthetic assistant replies test context resolution, not generated answer quality.
+    """
+
     cases = json.loads(CASE_PATH.read_text(encoding="utf-8"))
     policy_paths = sorted(POLICY_DIRECTORY.glob("*.pdf"))
     if len(policy_paths) != 8:
@@ -71,10 +81,17 @@ def main() -> None:
                     question=turn["question"],
                     history=history,
                 )
+                resolved_question = resolve_question_context(
+                    question=turn["question"],
+                    history=history,
+                )
+                expanded_context = needs_expanded_context(resolved_question)
                 results = retrieval.retrieve(
                     conversation_id=CONVERSATION_ID,
                     question=retrieval_question,
+                    top_k=EXPANDED_CONTEXT_TOP_K if expanded_context else None,
                     include_document_context=True,
+                    expand_selected_pages=expanded_context,
                 )
                 expected = {
                     (item["filename"], item["page"])

@@ -1,3 +1,5 @@
+"""Exercise controlled failures, cleanup and all-eight-PDF flows with fake model providers."""
+
 import asyncio
 import json
 from datetime import UTC, datetime
@@ -205,21 +207,23 @@ def test_chat_persistence_is_atomic_when_second_message_insert_fails(
         assert list(session.scalars(select(Message))) == []
 
 
-def test_three_invalid_structured_responses_fail_without_persistence(
+def test_unreadable_responses_exhaust_budget_without_saving_a_turn(
     application: FastAPI,
 ) -> None:
+    """Malformed drafts exhaust two attempts; they cannot prove policy absence."""
+
     calls = 0
 
     def setup() -> None:
         nonlocal calls
         seed_chat(application)
 
-        def fail_twice(messages):
+        def fail_validation(messages):
             nonlocal calls
             calls += 1
             raise InvalidModelResponseError("Invalid structured answer.")
 
-        application.state.fake_chat_provider.generate = fail_twice
+        application.state.fake_chat_provider.generate = fail_validation
 
     response = request_with_setup(
         application,
@@ -230,9 +234,10 @@ def test_three_invalid_structured_responses_fail_without_persistence(
     )
 
     assert response.status_code == 502
-    assert calls == 3
+    assert calls == 2
     with application.state.database.session_factory() as session:
-        assert list(session.scalars(select(Message))) == []
+        messages = list(session.scalars(select(Message)))
+    assert messages == []
 
 
 def upload_policy(application: FastAPI, conversation_id: str) -> httpx.Response:
@@ -422,6 +427,17 @@ def test_prompt_keeps_document_injection_as_json_data() -> None:
     assert json.loads(serialized_context)[0]["text"] == canary
 
 
+def test_prompt_contains_no_question_specific_answer_guidance() -> None:
+    messages = build_chat_messages(
+        history=[],
+        evidence=[],
+        question="May a visiting researcher use the telescope?",
+    )
+
+    assert "ANSWER-SCOPE GUIDANCE" not in messages[-1].content
+    assert "May a visiting researcher use the telescope?" in messages[-1].content
+
+
 class CharacterCounter:
     def count_tokens(self, text: str) -> int:
         return len(text)
@@ -490,9 +506,19 @@ def test_gemini_provider_normalizes_provider_error_variants(
         def generate_content(self, **kwargs):
             raise provider_exception()
 
+    clients = []
+
     class FakeClient:
         def __init__(self, **kwargs) -> None:
             self.models = FakeModels()
+            clients.append(self)
+            self.closed = False
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exception_details):
+            self.closed = True
 
     monkeypatch.setattr(genai, "Client", FakeClient)
     provider = GeminiChatProvider(
@@ -505,3 +531,6 @@ def test_gemini_provider_normalizes_provider_error_variants(
 
     with pytest.raises(expected_error):
         provider.generate([ChatMessage(role="user", content="Question")])
+
+    assert len(clients) == 1
+    assert clients[0].closed
